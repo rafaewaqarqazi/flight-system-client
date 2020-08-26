@@ -1,0 +1,25 @@
+.table-paginate{
+  li:nth-child(-n + 2), li:nth-last-child(-n + 2){
+    .page-link{
+      background-color: rgba(93, 120, 255, 0.1);
+      color: #5d78ff;
+      font-weight: 600;
+    }
+  }
+  .page-item{
+    .page-link{
+      border: none;
+      margin-right: 5px;
+      width: 29px;
+      text-align: center;
+      border-radius: 2px;
+    }
+  }
+
+}
+
+.table-row-center{
+  td{
+    vertical-align: middle;
+  }
+}

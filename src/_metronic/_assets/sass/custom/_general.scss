@@ -1,0 +1,28 @@
+.scale-up{
+  &:hover{
+    transform: scale(1.05);
+    z-index: 1;
+    transition: all 0.2s ease-in;
+  }
+}
+.lawyer-card__scale-image{
+  &:hover{
+    img{
+      transform: translateY(-5px);
+      transition: all 0.2s ease-in;
+    }
+  }
+}
+.letter-space-1{
+  letter-spacing: 1px;
+}
+.line-height-md{
+  line-height: 1.8rem;
+}
+.break-word{
+  word-break: break-word;
+}
+.dropdown-scroll{
+  max-height: 350px;
+  overflow-y: auto;
+}

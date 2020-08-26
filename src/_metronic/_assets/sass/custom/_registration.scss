@@ -1,0 +1,71 @@
+.base-style {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  border-width: 2px;
+  border-radius: 2px;
+  border-color: #eeeeee;
+  border-style: dashed;
+  background-color: #fafafa;
+  color: #bdbdbd;
+  outline: none;
+  transition: border .24s ease-in-out;
+}
+.active-style {
+  border-color: #35f388;
+}
+.pdf-uploaded {
+  border: 1px solid lightgrey;
+  border-radius: 4px;
+  padding: 8px;
+  margin-top: 10px;
+  position: relative;
+  display: inline-flex;
+  & div:first-child {
+    font-size: 50px;
+    color: red;
+  }
+  & div:nth-child(2) {
+    position: absolute;
+    font-size: 18px;
+    top: -8px;
+    right: -8px;
+    cursor: pointer;
+  }
+}
+.date-picker{
+  border: 1px solid #e2e5ec !important;
+  div{
+
+    border-radius: 4px;
+    padding: 0.65rem 1rem;
+    color: #495057;
+    input{
+      padding: 0;
+      line-height: 1.5;
+      &:before{
+        content: none;
+      }
+      &:after{
+        content: none;
+      }
+    }
+  }
+  .MuiInput-underline{
+    &:before{
+      content: none;
+    }
+    &:after{
+      content: none;
+    }
+  }
+}
+.application-table__row{
+  cursor: pointer;
+  &:hover{
+    background-color: rgba(82, 63, 105, 0.05);
+  }
+}
