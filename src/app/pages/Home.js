@@ -1,11 +1,7 @@
-import React, {useEffect, useState} from 'react';
+import React, { useState} from 'react';
 import UserLayout from "../Components/layout/user/UserLayout";
-import {Link} from "react-router-dom";
-import {getAllLawyers} from "../crud/user.crud";
-import LawyerCard from "../Components/users/LawyerCard";
 import * as lawyer from "../store/ducks/lawyers.duck";
-import {connect, useSelector} from "react-redux";
-import {getRatings} from "../../utils";
+import {connect} from "react-redux";
 import {Field, Form, Formik} from "formik";
 import InputAirports from "../Components/input/InputAirport";
 import {Chip} from "@material-ui/core";
@@ -14,12 +10,9 @@ import moment from "moment";
 import {formErrorMessage} from "./errors/FormErrorMessage";
 import clsx from "clsx";
 import {getAirline, getOneWayFlights, getTwoWayFlights} from "../crud/flights.crud";
-const Home = ({addLawyers}) => {
-  const { lawyersList } = useSelector(
-    ({ lawyers: {lawyersList} }) => ({
-      lawyersList
-    })
-  );
+import {airports} from "../../utils/airports";
+const Home = () => {
+
   const [flights, setFlights] = useState([])
   const [loading, setLoading] = useState(false);
   const [loadingButtonStyle, setLoadingButtonStyle] = useState({
@@ -35,14 +28,7 @@ const Home = ({addLawyers}) => {
     setLoading(false);
     setLoadingButtonStyle({ paddingRight: "2.5rem" });
   };
-  useEffect(() => {
-    getAllLawyers()
-      .then(res => {
-        if (res.data.success) {
-          addLawyers(res.data.lawyers)
-        }
-      })
-  }, [addLawyers])
+
   const getAirlineByCode = async code => {
     const result = await getAirline({airlineCodes: code})
     const data = await result.data
@@ -118,7 +104,7 @@ const Home = ({addLawyers}) => {
                   setFieldValue
 
                 }) => (
-                <Form className="kt-form row align-items-center"  style={{background: '#fff', padding: '10px 5px 30px 10px', borderRadius: '4px'}} onSubmit={handleSubmit}>
+                <Form className="kt-form row w-100 align-items-center"  style={{background: '#fff', padding: '10px 5px 30px 10px', borderRadius: '4px'}} onSubmit={handleSubmit}>
                   <div className="col-12 mb-3">
                     <Chip
                       label="One Way"
@@ -211,28 +197,35 @@ const Home = ({addLawyers}) => {
               )}
             </Formik>
           </div>
-          <div className='row' style={{background: '#fff', padding: '10px 5px 30px 10px', borderRadius: '4px'}}>
-            <h4 className='mb-3 col-12'>Flights</h4>
-            {console.log('flights', flights)}
-            <div className="col-2">Airline</div>
-            <div className="col-2">Departure</div>
-            <div className="col-2">Arrival</div>
-            <div className="col-2">Duration</div>
-            <div className="col-2">Availability</div>
-            <div className="col-2"></div>
+          <div className='w-100' style={{background: '#fff', padding: '20px', margin: '0 -10px', borderRadius: '4px'}}>
+            <div className="row">
+              <h4 className='mb-3 col-12'>Flights</h4>
+              {console.log('flights', flights)}
+              <div className="col-2 font-weight-bold mb-4">Airline</div>
+              <div className="col-2 font-weight-bold mb-4">Departure</div>
+              <div className="col-2 font-weight-bold mb-4">Arrival</div>
+              <div className="col-2 font-weight-bold mb-4">Duration</div>
+              <div className="col-2 font-weight-bold mb-4">Price</div>
+              <div className="col-2 font-weight-bold mb-4">Actions</div>
+            </div>
 
-          </div>
-          <div  style={{background: '#fff', padding: '10px 5px 30px 10px', borderRadius: '4px'}}>
             {
               flights.map(flight => (
                 <>
                   {flight.itineraries[0]?.segments?.map(segment => (
                     <div className='row'>
-                      <div className="col-2">{segment.carrierCode}-{segment.aircraft?.code}</div>
-                      <div className="col-2">{segment?.departure.iataCode}-{moment(segment?.departure.at).format('DD-MM-YY hh:mm a')}</div>
-                      <div className="col-2">{segment?.arrival.iataCode}-{moment(segment?.arrival.at).format('DD-MM-YY hh:mm a')}</div>
-                      <div className="col-2">{moment.duration(segment.duration).hours()}</div>
-                      <div className="col-2"></div>
+                      <div className="col-2 p-3">{segment.carrierCode}-{segment.number}</div>
+                      <div className="col-2 p-3">
+                        <div>{airports.filter(airport => airport.code === segment?.departure.iataCode)[0]?.name}</div>
+                        <div>{moment(segment?.departure.at).format('DD-MM-YY hh:mm a')}</div>
+                      </div>
+                      <div className="col-2 p-3">
+                        <div>{airports.filter(airport => airport.code === segment?.arrival.iataCode)[0]?.name}</div>
+                        <div>{moment(segment?.arrival.at).format('DD-MM-YY hh:mm a')}</div>
+                      </div>
+                      <div className="col-2 p-3">{moment.utc(moment.duration(segment.duration).asMilliseconds()).format('HH:mm')}</div>
+                      <div className="col-2 p-3">{flight.price.currency}-{flight.price?.total}</div>
+                      <div className="col-2 p-3"></div>
                     </div>
                   ))}
                 </>
@@ -240,6 +233,7 @@ const Home = ({addLawyers}) => {
               ))
             }
           </div>
+
 
         </div>
       </div>
