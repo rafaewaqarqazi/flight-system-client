@@ -10,7 +10,7 @@ const InputAirports = ({field}) => {
     <Field>
       {({form: {setFieldValue, values}}) => {
         const handleChangeA = (event, value) => {
-          setFieldValue(field,  value.code )
+          setFieldValue(field,  value?.code )
         }
         return (
           <Autocomplete

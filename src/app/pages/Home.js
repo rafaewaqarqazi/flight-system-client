@@ -6,21 +6,21 @@ import LawyerCard from "../Components/users/LawyerCard";
 import * as lawyer from "../store/ducks/lawyers.duck";
 import {connect, useSelector} from "react-redux";
 import {getRatings} from "../../utils";
-import {login} from "../crud/auth.crud";
 import {Field, Form, Formik} from "formik";
 import InputAirports from "../Components/input/InputAirport";
-import Chip from "@material-ui/core/Chip";
+import {Chip} from "@material-ui/core";
 import {Done, CloseOutlined} from '@material-ui/icons'
 import moment from "moment";
 import {formErrorMessage} from "./errors/FormErrorMessage";
 import clsx from "clsx";
-import {getOneWayFlights} from "../crud/flights.crud";
+import {getAirline, getOneWayFlights, getTwoWayFlights} from "../crud/flights.crud";
 const Home = ({addLawyers}) => {
   const { lawyersList } = useSelector(
     ({ lawyers: {lawyersList} }) => ({
       lawyersList
     })
   );
+  const [flights, setFlights] = useState([])
   const [loading, setLoading] = useState(false);
   const [loadingButtonStyle, setLoadingButtonStyle] = useState({
     paddingRight: "2.5rem"
@@ -42,12 +42,22 @@ const Home = ({addLawyers}) => {
           addLawyers(res.data.lawyers)
         }
       })
-  }, [])
+  }, [addLawyers])
+  const getAirlineByCode = async code => {
+    const result = await getAirline({airlineCodes: code})
+    const data = await result.data
+    if (data?.airline) {
+      return  `${result.data?.airline[0]?.businessName}`
+    } else {
+      return 'NA'
+    }
+
+  }
   return (
     <UserLayout nobg={true}>
       <div style={{marginTop: '-20px', backgroundImage: 'url(/media/bg/main.jpg)', backgroundSize: '100%',  backgroundRepeat: 'no-repeat'}}>
         <div className="container">
-          <div className="row align-items-center" style={{height: 310}}>
+          <div className="d-flex align-items-center" style={{height: 310}}>
             <Formik
               initialValues={{
                 origin: "",
@@ -85,10 +95,12 @@ const Home = ({addLawyers}) => {
               onSubmit={(values, { setStatus, setSubmitting }) => {
                 console.log('values', values)
                 enableLoading();
-                // setTimeout(() => {
-                  getOneWayFlights(values)
+                const getFlight = values.oneWay ? getOneWayFlights : getTwoWayFlights
+
+                getFlight(values)
                     .then((res) => {
                       console.log('res', res)
+                      setFlights(res.data.flights)
                       disableLoading();
                     })
                     .catch((e) => {
@@ -96,7 +108,7 @@ const Home = ({addLawyers}) => {
                       disableLoading();
                       setSubmitting(false);
                     });
-                // }, 1000);
+
               }}
             >
               {({
@@ -106,8 +118,8 @@ const Home = ({addLawyers}) => {
                   setFieldValue
 
                 }) => (
-                <Form className="kt-form row w-100 align-items-center"  style={{background: '#fff', padding: '10px 5px 30px 10px', borderRadius: '4px'}} onSubmit={handleSubmit}>
-                  <div className="col-12">
+                <Form className="kt-form row align-items-center"  style={{background: '#fff', padding: '10px 5px 30px 10px', borderRadius: '4px'}} onSubmit={handleSubmit}>
+                  <div className="col-12 mb-3">
                     <Chip
                       label="One Way"
                       onClick={() => setFieldValue('oneWay', !values.oneWay)}
@@ -199,83 +211,34 @@ const Home = ({addLawyers}) => {
               )}
             </Formik>
           </div>
-          <div className='d-flex justify-content-between align-items-center' style={{background: 'rgb(242, 243, 248)', padding: '10px 5px 30px 10px', borderRadius: '4px'}}>
-            <h4 className='mb-0'>Highest Ranked</h4>
-          <Link to='/lawyers/list' className='nav-link'>See All</Link>
+          <div className='row' style={{background: '#fff', padding: '10px 5px 30px 10px', borderRadius: '4px'}}>
+            <h4 className='mb-3 col-12'>Flights</h4>
+            {console.log('flights', flights)}
+            <div className="col-2">Airline</div>
+            <div className="col-2">Departure</div>
+            <div className="col-2">Arrival</div>
+            <div className="col-2">Duration</div>
+            <div className="col-2">Availability</div>
+            <div className="col-2"></div>
+
           </div>
-          <div className="row mt-5">
+          <div  style={{background: '#fff', padding: '10px 5px 30px 10px', borderRadius: '4px'}}>
             {
-              lawyersList.length === 0 ? <h5 className='text-center w-100 p-5'>No Record Found!</h5>
-              : lawyersList.sort((a, b) => getRatings(b.lawyer_details.reviews) - getRatings(a.lawyer_details.reviews))
-                .map((lawyer, i) => (
-                  i < 6 &&
-                  <div className="col-12 col-sm-4" key={lawyer._id}>
-                    <LawyerCard lawyer={lawyer} />
-                  </div>
-                ))
+              flights.map(flight => (
+                <>
+                  {flight.itineraries[0]?.segments?.map(segment => (
+                    <div className='row'>
+                      <div className="col-2">{segment.carrierCode}-{segment.aircraft?.code}</div>
+                      <div className="col-2">{segment?.departure.iataCode}-{moment(segment?.departure.at).format('DD-MM-YY hh:mm a')}</div>
+                      <div className="col-2">{segment?.arrival.iataCode}-{moment(segment?.arrival.at).format('DD-MM-YY hh:mm a')}</div>
+                      <div className="col-2">{moment.duration(segment.duration).hours()}</div>
+                      <div className="col-2"></div>
+                    </div>
+                  ))}
+                </>
+
+              ))
             }
-          </div>
-          <div className='d-flex justify-content-between align-items-center' style={{background: 'rgb(242, 243, 248)', padding: '10px 5px 10px 10px', borderRadius: '4px'}}>
-            <h4 className='mb-0'>Categories</h4>
-          </div>
-          <div className="row mt-3">
-            <div className='p-4 align-items-center col-6 col-sm-3 kt-portlet kt-portlet--border-bottom-brand scale-up'>
-              <div style={{fontSize: '36px'}} className='mr-3'><i className='fa fa-user-injured'/></div>
-              <h5 className='flex-grow-1'>Accident & Injuries</h5>
-            </div>
-            <div className='p-4 align-items-center col-6 col-sm-3 kt-portlet kt-portlet--border-bottom-brand scale-up'>
-              <div style={{fontSize: '36px'}} className='mr-3'><i className='fa fa-gavel'/></div>
-              <h5 className='flex-grow-1'>Criminal Law</h5>
-            </div>
-            <div className='p-4 align-items-center col-6 col-sm-3 kt-portlet kt-portlet--border-bottom-brand scale-up'>
-              <div style={{fontSize: '36px'}} className='mr-3'><i className='fa fa-users'/></div>
-              <h5 className='flex-grow-1'>Family Law</h5>
-            </div>
-            <div className='p-4 align-items-center col-6 col-sm-3 kt-portlet kt-portlet--border-bottom-brand scale-up'>
-              <div style={{fontSize: '36px'}} className='mr-3'><i className='fa fa-user-tie'/></div>
-              <h5 className='flex-grow-1'>Employment Law</h5>
-            </div>
-          </div>
-
-          <div className='d-flex justify-content-between align-items-center' style={{background: 'rgb(242, 243, 248)', padding: '10px 5px 10px 10px', borderBottom: '1px solid rgb(220, 220, 220)'}}>
-            <h4 className='mb-0'>Here's What Clients say about our lawyers</h4>
-          </div>
-          <div className="row mt-3 pb-5">
-            {
-              lawyersList.length === 0 ? <h5 className='text-center w-100 p-5'>Nothing Found!</h5>
-                : lawyersList.sort((a, b) => getRatings(b.lawyer_details.reviews) - getRatings(a.lawyer_details.reviews))
-                  .map((lawyer, i) => {
-                    const review = lawyer.lawyer_details.reviews.sort((a, b) => parseInt(b.rating, 10) - parseInt(a.rating, 10) )[0]
-                    if (1<4) {
-                      if (review) {
-                        return (
-                          <div className='p-4 d-flex align-items-start col-12 col-sm-6 '>
-                            <img
-                              className="kt-img-rounded mr-4"
-                              width={95}
-                              height={95}
-                              src={
-                                review?.reviewedBy?.profileImage?.filename
-                                  ? `/images/${review?.reviewedBy?.profileImage.filename}`
-                                  : "/media/users/100_13.jpg"
-                              }
-                              alt={review?.reviewedBy?.firstName}
-                            />
-                            <div className='flex-grow-1 d-flex flex-column'>
-                              <p>{review.text}</p>
-                              <div className='font-weight-bold mt-2'>{`${review.reviewedBy.firstName} ${review.reviewedBy.lastName}`}</div>
-                              <div>{review.reviewedBy.address}</div>
-                            </div>
-                          </div>
-                        )
-                      } else {
-                        return (<h5 className='text-center w-100 p-5'>Nothing Found!</h5>)
-                      }
-
-                    }
-                  })
-            }
-
           </div>
 
         </div>
