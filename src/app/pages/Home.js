@@ -39,6 +39,18 @@ const Home = () => {
     }
 
   }
+  const getRoute = segments => {
+    let route = ''
+      segments.map((segment, i) => {
+        if (segments.length === 1) {
+          route = `${segment.departure.iataCode}-${segment.arrival.iataCode}`
+        } else {
+          route += i < segments.length -1 ? segment.departure.iataCode + '-' : segment.arrival.iataCode
+        }
+
+      })
+    return route
+  }
   return (
     <UserLayout nobg={true}>
       <div style={{marginTop: '-20px', backgroundImage: 'url(/media/bg/main.jpg)', backgroundSize: '100%',  backgroundRepeat: 'no-repeat'}}>
@@ -211,24 +223,22 @@ const Home = () => {
 
             {
               flights.map(flight => (
-                <>
-                  {flight.itineraries[0]?.segments?.map(segment => (
-                    <div className='row'>
-                      <div className="col-2 p-3">{segment.carrierCode}-{segment.number}</div>
-                      <div className="col-2 p-3">
-                        <div>{airports.filter(airport => airport.code === segment?.departure.iataCode)[0]?.name}</div>
-                        <div>{moment(segment?.departure.at).format('DD-MM-YY hh:mm a')}</div>
-                      </div>
-                      <div className="col-2 p-3">
-                        <div>{airports.filter(airport => airport.code === segment?.arrival.iataCode)[0]?.name}</div>
-                        <div>{moment(segment?.arrival.at).format('DD-MM-YY hh:mm a')}</div>
-                      </div>
-                      <div className="col-2 p-3">{moment.utc(moment.duration(segment.duration).asMilliseconds()).format('HH:mm')}</div>
-                      <div className="col-2 p-3">{flight.price.currency}-{flight.price?.total}</div>
-                      <div className="col-2 p-3"></div>
+                <div style={{border: '1px solid lightgrey', borderRadius: 4}} className='pl-1 pr-1 mb-2'>
+                  <div className='row'>
+                    <div className="col-2 p-3">{flight.itineraries[0]?.segments[0]?.carrierCode}-{flight.itineraries[0]?.segments[0]?.number}</div>
+                    <div className="col-2 p-3">
+                      <div>{getRoute(flight.itineraries[0]?.segments)}</div>
+                      <div>{moment(flight.itineraries[0]?.segments[0]?.departure.at).format('DD-MM-YY hh:mm a')}</div>
                     </div>
-                  ))}
-                </>
+                    <div className="col-2 p-3">
+                      <div>{}</div>
+                      <div>{moment(flight.itineraries[0]?.segments[0]?.arrival.at).format('DD-MM-YY hh:mm a')}</div>
+                    </div>
+                    <div className="col-2 p-3">{moment.utc(moment.duration(flight.itineraries[0]?.duration).asMilliseconds()).format('HH:mm')}</div>
+                    <div className="col-2 p-3">{flight.price.currency}-{flight.price?.total}</div>
+                    <div className="col-2 p-3"></div>
+                  </div>
+                </div>
 
               ))
             }
