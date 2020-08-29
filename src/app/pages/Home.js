@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import UserLayout from "../Components/layout/user/UserLayout";
 import * as lawyer from "../store/ducks/lawyers.duck";
-import { connect } from "react-redux";
+import { connect, shallowEqual, useSelector } from "react-redux";
 import { Field, Form, Formik } from "formik";
 import InputAirports from "../Components/input/InputAirport";
 import { Chip } from "@material-ui/core";
@@ -10,12 +10,16 @@ import moment from "moment";
 import { formErrorMessage } from "./errors/FormErrorMessage";
 import clsx from "clsx";
 import {
+  bookFlight,
   getAirline,
   getOneWayFlights,
   getRecommended,
   getTwoWayFlights
 } from "../crud/flights.crud";
 import { Button, Modal, Spinner, Table } from "react-bootstrap";
+import Login from "./auth/Login";
+import AlertSuccess from "../Components/alerts/AlertSuccess";
+import AlertError from "../Components/alerts/AlertError";
 const Home = () => {
   const [showDetails, setShowDetails] = useState(false);
   const [searched, setSearched] = useState(false);
@@ -23,11 +27,29 @@ const Home = () => {
   const [flights, setFlights] = useState([]);
   const [recommended, setRecommended] = useState([]);
   const [loading, setLoading] = useState(false);
+  const [loadingBooking, setLoadingBooking] = useState(false);
+  const [response, setResponse] = useState({
+    success: {
+      show: false,
+      message: ""
+    },
+    error: {
+      show: false,
+      message: ""
+    }
+  });
+  const [showLogin, setShowLogin] = useState(false);
   const [recommendedLoading, setRecommendedLoading] = useState(false);
   const [loadingButtonStyle, setLoadingButtonStyle] = useState({
     paddingRight: "2.5rem"
   });
-
+  const { isAuthorized, user } = useSelector(
+    ({ auth }) => ({
+      isAuthorized: auth.user != null,
+      user: auth.user
+    }),
+    shallowEqual
+  );
   //Fetching Recommended
   useEffect(() => {
     setRecommendedLoading(true);
@@ -75,6 +97,59 @@ const Home = () => {
       }
     });
     return route;
+  };
+  const handleClickBookNow = () => {
+    if (isAuthorized) {
+      bookFlight({ details, userId: user._id })
+        .then(res => {
+          console.log("res", res);
+          setTimeout(() => {
+            setShowDetails(false);
+            setDetails(null);
+            setResponse({
+              success: {
+                show: true,
+                message: res.data.message
+              },
+              error: {
+                show: false,
+                message: ""
+              }
+            });
+          }, 500);
+        })
+        .catch(error => {
+          setResponse({
+            success: {
+              show: false,
+              message: ""
+            },
+            error: {
+              show: true,
+              message: "Could not book Flight at the moment"
+            }
+          });
+        });
+    } else {
+      setShowDetails(false);
+      setShowLogin(true);
+    }
+  };
+  const handleLogin = () => {
+    setShowLogin(false);
+    setShowDetails(true);
+  };
+  const closeAlert = () => {
+    setResponse({
+      success: {
+        show: false,
+        message: ""
+      },
+      error: {
+        show: false,
+        message: ""
+      }
+    });
   };
   return (
     <UserLayout nobg={true}>
@@ -285,6 +360,23 @@ const Home = () => {
               )}
             </Formik>
           </div>
+          <div
+            className="w-100"
+            style={{
+              margin: "0 -10px"
+            }}
+          >
+            <AlertSuccess
+              show={response.success.show}
+              message={response.success.message}
+              handleClose={closeAlert}
+            />
+            <AlertError
+              show={response.error.show}
+              message={response.error.message}
+              handleClose={closeAlert}
+            />
+          </div>
           {searched && (
             <div
               className="w-100"
@@ -381,7 +473,7 @@ const Home = () => {
           )}
 
           <div
-            className="w-100 mt-5"
+            className="w-100 mt-5 mb-5"
             style={{
               background: "#fff",
               padding: "20px",
@@ -532,8 +624,26 @@ const Home = () => {
               <Button variant="secondary" onClick={() => setShowDetails(false)}>
                 Close
               </Button>
-              <Button variant="primary">Book Now</Button>
+              <button
+                className={`btn btn-primary btn-elevate kt-login__btn-primary ${clsx(
+                  {
+                    "kt-spinner kt-spinner--right kt-spinner--md kt-spinner--light": loadingBooking
+                  }
+                )}`}
+                style={loadingButtonStyle}
+                onClick={handleClickBookNow}
+              >
+                Book Now
+              </button>
             </Modal.Footer>
+          </Modal>
+          <Modal show={showLogin} onHide={() => setShowLogin(false)} size="lg">
+            <Modal.Header closeButton>
+              <Modal.Title>Login</Modal.Title>
+            </Modal.Header>
+            <Modal.Body>
+              <Login isModal={true} handleLogin={handleLogin} />
+            </Modal.Body>
           </Modal>
         </div>
       </div>

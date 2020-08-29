@@ -1,17 +1,16 @@
-import React from 'react';
-import {Autocomplete} from "@material-ui/lab";
-import {TextField} from "@material-ui/core";
-import {Field} from "formik";
-import {airports} from "../../../utils/airports";
+import React from "react";
+import { Autocomplete } from "@material-ui/lab";
+import { TextField } from "@material-ui/core";
+import { Field } from "formik";
+import { airports } from "../../../utils/airports";
 
-const InputAirports = ({field}) => {
-
+const InputAirports = ({ field }) => {
   return (
     <Field>
-      {({form: {setFieldValue, values}}) => {
+      {({ form: { setFieldValue, values } }) => {
         const handleChangeA = (event, value) => {
-          setFieldValue(field,  value?.code )
-        }
+          setFieldValue(field, value?.code);
+        };
         return (
           <Autocomplete
             onChange={handleChangeA}
@@ -27,15 +26,15 @@ const InputAirports = ({field}) => {
               <TextField
                 {...params}
                 variant="outlined"
-                margin='dense'
+                margin="dense"
                 // value={values.country}
                 inputProps={{
-                  ...params.inputProps,
+                  ...params.inputProps
                 }}
               />
             )}
           />
-        )
+        );
       }}
     </Field>
   );
