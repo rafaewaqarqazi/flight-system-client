@@ -42,8 +42,8 @@ function Layout({ children, layoutConfig }) {
         className="kt-quick-panel--right kt-demo-panel--right kt-offcanvas-panel--right kt-header--fixed kt-header-mobile--fixed "
         style={{
           background: "#f2f3f8",
-          backgroundImage: "url(/media/bg/bg-9.jpg)",
-          backgroundSize: "100% 470px",
+          backgroundImage: "url(/media/bg/main.jpg)",
+          backgroundSize: "100%",
           backgroundRepeat: "no-repeat",
           backgroundAttachment: "fixed"
         }}

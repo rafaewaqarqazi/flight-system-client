@@ -8,7 +8,7 @@ import {
   PortletHeaderToolbar
 } from "../../partials/content/Portlet";
 import { useSelector } from "react-redux";
-import { getUserTrips } from "../../crud/flights.crud";
+import { getUserTrips, getAllTrips } from "../../crud/flights.crud";
 import FlightList from "../../Components/flights/FlightList";
 import { Spinner } from "react-bootstrap";
 import AlertSuccess from "../../Components/alerts/AlertSuccess";
@@ -22,7 +22,7 @@ import {
   DropdownToggle
 } from "reactstrap";
 const localizer = momentLocalizer(moment);
-const MyTrips = ({ userType = "lawyer" }) => {
+const MyTrips = ({ userType = "admin" }) => {
   const { user } = useSelector(({ auth: { user } }) => ({
     user
   }));
@@ -50,7 +50,8 @@ const MyTrips = ({ userType = "lawyer" }) => {
 
   useEffect(() => {
     setTripsLoading(true);
-    getUserTrips(user._id)
+    const getTipsFunction = userType === "user" ? getUserTrips : getAllTrips;
+    getTipsFunction(user._id)
       .then(result => {
         setTimeout(() => {
           setTrips(result.data.trips);
@@ -112,12 +113,12 @@ const MyTrips = ({ userType = "lawyer" }) => {
       }
     });
   };
-  const updateTipsCancel = tripId => {
+  const updateTipsCancel = (tripId, status) => {
     const newTrips = trips.map(trip => {
       if (trip._id === tripId) {
         return {
           ...trip,
-          bookingStatus: "Canceled"
+          bookingStatus: status
         };
       } else {
         return trip;
@@ -150,23 +151,29 @@ const MyTrips = ({ userType = "lawyer" }) => {
           title="Trips"
           toolbar={
             <PortletHeaderToolbar>
-              <Dropdown isOpen={dropdown} toggle={() => setDropdown(!dropdown)}>
-                <DropdownToggle
-                  className="btn-bold btn-sm btn-label-brand border-0 mb-1 mb-sm-0 mr-3 text-capitalize"
-                  caret
+              {userType === "user" && (
+                <Dropdown
+                  isOpen={dropdown}
+                  toggle={() => setDropdown(!dropdown)}
                 >
-                  {view} view
-                </DropdownToggle>
-                <DropdownMenu>
-                  <DropdownItem onClick={() => setView("details")}>
-                    Details View
-                  </DropdownItem>
+                  <DropdownToggle
+                    className="btn-bold btn-sm btn-label-brand border-0 mb-1 mb-sm-0 mr-3 text-capitalize"
+                    caret
+                  >
+                    {view} view
+                  </DropdownToggle>
+                  <DropdownMenu>
+                    <DropdownItem onClick={() => setView("details")}>
+                      Details View
+                    </DropdownItem>
 
-                  <DropdownItem onClick={() => setView("calender")}>
-                    Calender View
-                  </DropdownItem>
-                </DropdownMenu>
-              </Dropdown>
+                    <DropdownItem onClick={() => setView("calender")}>
+                      Calender View
+                    </DropdownItem>
+                  </DropdownMenu>
+                </Dropdown>
+              )}
+
               <Filters
                 filters={filters}
                 handleChangeFilters={handleChangeFilters}
@@ -206,6 +213,7 @@ const MyTrips = ({ userType = "lawyer" }) => {
                 }))}
                 setResponse={setResponse}
                 updateTipsCancel={updateTipsCancel}
+                userType={userType}
               />
             </React.Fragment>
           ) : (

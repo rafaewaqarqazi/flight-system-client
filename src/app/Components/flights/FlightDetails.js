@@ -3,7 +3,7 @@ import { Button, Modal, Table } from "react-bootstrap";
 import moment from "moment";
 import clsx from "clsx";
 import Login from "../../pages/auth/Login";
-import { bookFlight, cancelFlight } from "../../crud/flights.crud";
+import { bookFlight, changeFlightStatus } from "../../crud/flights.crud";
 import { shallowEqual, useSelector } from "react-redux";
 
 const FlightDetails = ({
@@ -14,7 +14,8 @@ const FlightDetails = ({
   setResponse,
   readOnly,
   bookingStatus,
-  updateTipsCancel
+  updateTipsCancel,
+  userType
 }) => {
   const [loadingBooking, setLoadingBooking] = useState(false);
   const [showLogin, setShowLogin] = useState(false);
@@ -76,21 +77,21 @@ const FlightDetails = ({
       setShowLogin(true);
     }
   };
-  const handleClickCancel = () => {
+  const handleClickChangeStatus = status => {
     if (isAuthorized) {
       enableLoading();
-      cancelFlight({ flightId: bookingStatus._id })
+      changeFlightStatus({ flightId: bookingStatus._id, status })
         .then(res => {
           console.log("res", res);
           setTimeout(() => {
             disableLoading();
             setShowDetails(false);
             setDetails(null);
-            updateTipsCancel(bookingStatus._id);
+            updateTipsCancel(bookingStatus._id, status);
             setResponse({
               success: {
                 show: true,
-                message: "Booking Canceled Successfully"
+                message: `Booking ${status} Successfully`
               },
               error: {
                 show: false,
@@ -225,18 +226,33 @@ const FlightDetails = ({
           <Button variant="secondary" onClick={() => setShowDetails(false)}>
             Close
           </Button>
-          {!readOnly ? (
-            <button
-              className={`btn btn-primary btn-elevate kt-login__btn-primary ${clsx(
-                {
-                  "kt-spinner kt-spinner--right kt-spinner--md kt-spinner--light": loadingBooking
-                }
-              )}`}
-              style={loadingButtonStyle}
-              onClick={handleClickBookNow}
-            >
-              Book Now
-            </button>
+          {userType === "user" ? (
+            !readOnly ? (
+              <button
+                className={`btn btn-primary btn-elevate kt-login__btn-primary ${clsx(
+                  {
+                    "kt-spinner kt-spinner--right kt-spinner--md kt-spinner--light": loadingBooking
+                  }
+                )}`}
+                style={loadingButtonStyle}
+                onClick={handleClickBookNow}
+              >
+                Book Now
+              </button>
+            ) : (
+              <button
+                className={`btn btn-primary btn-elevate kt-login__btn-primary ${clsx(
+                  {
+                    "kt-spinner kt-spinner--right kt-spinner--md kt-spinner--light": loadingBooking
+                  }
+                )}`}
+                disabled={bookingStatus?.bookingStatus !== "Pending"}
+                style={loadingButtonStyle}
+                onClick={() => handleClickChangeStatus("Canceled")}
+              >
+                Cancel Booking
+              </button>
+            )
           ) : (
             <button
               className={`btn btn-primary btn-elevate kt-login__btn-primary ${clsx(
@@ -246,9 +262,9 @@ const FlightDetails = ({
               )}`}
               disabled={bookingStatus?.bookingStatus !== "Pending"}
               style={loadingButtonStyle}
-              onClick={handleClickCancel}
+              onClick={() => handleClickChangeStatus("Approved")}
             >
-              Cancel Booking
+              Approve Booking
             </button>
           )}
         </Modal.Footer>

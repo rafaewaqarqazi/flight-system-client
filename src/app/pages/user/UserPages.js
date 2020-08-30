@@ -31,7 +31,7 @@ const UserPages = () => {
           component={() => (
             <UserLayout>
               <KtContent>
-                <MyTrips userType="client" />
+                <MyTrips userType="user" />
               </KtContent>
             </UserLayout>
           )}

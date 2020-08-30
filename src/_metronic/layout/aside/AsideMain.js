@@ -1,12 +1,12 @@
-import React from 'react';
-import {useAsideStyles} from "../../../utils/material-styles/asideStyles";
-import {Drawer} from "@material-ui/core";
+import React from "react";
+import { useAsideStyles } from "../../../utils/material-styles/asideStyles";
+import { Drawer } from "@material-ui/core";
 import clsx from "clsx";
-import {Link} from "react-router-dom";
+import { Link } from "react-router-dom";
 import * as builder from "../../ducks/builder";
-import {connect} from "react-redux";
+import { connect } from "react-redux";
 
-const AsideMain = ({open, setOpen,children}) => {
+const AsideMain = ({ open, setOpen, children }) => {
   const classes = useAsideStyles();
   return (
     <>
@@ -14,21 +14,25 @@ const AsideMain = ({open, setOpen,children}) => {
         variant="permanent"
         className={clsx(classes.drawer, {
           [classes.drawerOpen]: open,
-          [classes.drawerClose]: !open,
+          [classes.drawerClose]: !open
         })}
         classes={{
           paper: clsx({
             [classes.drawerOpen]: open,
-            [classes.drawerClose]: !open,
-          }),
+            [classes.drawerClose]: !open
+          })
         }}
         open={open}
       >
-        <div className={!open && 'kt-aside--minimize'}>
+        <div className={!open && "kt-aside--minimize"}>
           <div className="kt-aside__brand kt-grid__item " id="kt_aside_brand">
             <div className="kt-aside__brand-logo">
               <Link to="/">
-                <img alt="Logo" src="/media/logos/suits-logo.png" style={{width: '100px'}}/>
+                <img
+                  alt="Logo"
+                  src="/media/logos/logo.png"
+                  style={{ width: "60px" }}
+                />
               </Link>
             </div>
             <div className="kt-aside__brand-tools">
@@ -36,7 +40,7 @@ const AsideMain = ({open, setOpen,children}) => {
                 className="kt-aside__brand-aside-toggler"
                 onClick={() => setOpen(!open)}
               >
-                { open ?
+                {open ? (
                   <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -53,7 +57,7 @@ const AsideMain = ({open, setOpen,children}) => {
                         fill="none"
                         fillRule="evenodd"
                       >
-                        <polygon points="0 0 24 0 24 24 0 24"/>
+                        <polygon points="0 0 24 0 24 24 0 24" />
                         <path
                           d="M5.29288961,6.70710318 C4.90236532,6.31657888 4.90236532,5.68341391 5.29288961,5.29288961 C5.68341391,4.90236532 6.31657888,4.90236532 6.70710318,5.29288961 L12.7071032,11.2928896 C13.0856821,11.6714686 13.0989277,12.281055 12.7371505,12.675721 L7.23715054,18.675721 C6.86395813,19.08284 6.23139076,19.1103429 5.82427177,18.7371505 C5.41715278,18.3639581 5.38964985,17.7313908 5.76284226,17.3242718 L10.6158586,12.0300721 L5.29288961,6.70710318 Z"
                           fill="#000000"
@@ -70,7 +74,7 @@ const AsideMain = ({open, setOpen,children}) => {
                       </g>
                     </svg>
                   </span>
-                  :
+                ) : (
                   <span>
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -87,7 +91,7 @@ const AsideMain = ({open, setOpen,children}) => {
                         fill="none"
                         fillRule="evenodd"
                       >
-                        <polygon points="0 0 24 0 24 24 0 24"/>
+                        <polygon points="0 0 24 0 24 24 0 24" />
                         <path
                           d="M12.2928955,6.70710318 C11.9023712,6.31657888 11.9023712,5.68341391 12.2928955,5.29288961 C12.6834198,4.90236532 13.3165848,4.90236532 13.7071091,5.29288961 L19.7071091,11.2928896 C20.085688,11.6714686 20.0989336,12.281055 19.7371564,12.675721 L14.2371564,18.675721 C13.863964,19.08284 13.2313966,19.1103429 12.8242777,18.7371505 C12.4171587,18.3639581 12.3896557,17.7313908 12.7628481,17.3242718 L17.6158645,12.0300721 L12.2928955,6.70710318 Z"
                           fill="#000000"
@@ -103,7 +107,7 @@ const AsideMain = ({open, setOpen,children}) => {
                       </g>
                     </svg>
                   </span>
-                }
+                )}
               </button>
             </div>
           </div>
@@ -123,7 +127,6 @@ const AsideMain = ({open, setOpen,children}) => {
           </div>
         </div>
       </Drawer>
-
     </>
   );
 };

@@ -1,65 +1,42 @@
-import React, {useEffect, useState} from "react";
-import {connect, useSelector} from "react-redux";
+import React from "react";
+import { connect } from "react-redux";
 import * as builder from "../../ducks/builder";
-import {NavLink} from "react-router-dom";
-import {List, ListItem} from '@material-ui/core'
+import { NavLink } from "react-router-dom";
+import { List, ListItem } from "@material-ui/core";
 import AsideMain from "./AsideMain";
 
-function AsideLeftAdmin({open, setOpen}) {
-  const { chat, user } = useSelector(
-    ({ chat, auth: { user } }) => ({
-      chat,
-      user
-    })
-  );
-  const [unseen, setUnseen] = useState(false)
-  const unseenMsg = (chatList) => {
-    let bool = false
-    chatList.map(list => {
-      list.messages.map(msg => {
-        if (msg.receiver?._id === user._id && !msg.seen) {
-          bool = true
-        }
-      })
-    })
-    return bool
-  }
-  useEffect(() => {
-    if (unseenMsg(chat.chatList)) {
-      setUnseen(true)
-    } else {
-      setUnseen(false)
-    }
-  }, [chat])
+function AsideLeftAdmin({ open, setOpen }) {
   return (
     <AsideMain open={open} setOpen={setOpen}>
       <List className="kt-menu__nav ">
-        <NavLink to="/dashboard" activeClassName='kt-menu__item--active' className="kt-menu__item">
-          <ListItem className='kt-menu__link w-100'>
-            <i className='kt-menu__link-icon fa fa-chart-bar'/>
+        <NavLink
+          to="/dashboard"
+          activeClassName="kt-menu__item--active"
+          className="kt-menu__item"
+        >
+          <ListItem className="kt-menu__link w-100">
+            <i className="kt-menu__link-icon fa fa-chart-bar" />
             <span className="kt-menu__link-text">Dashboard</span>
           </ListItem>
         </NavLink>
-        <NavLink to="/cases" activeClassName='kt-menu__item--active' className="kt-menu__item">
-          <ListItem className="kt-menu__link w-100" >
-            <i className='kt-menu__link-icon fa fa-briefcase'/>
-            <span className="kt-menu__link-text">Cases</span>
+        <NavLink
+          to="/flights"
+          activeClassName="kt-menu__item--active"
+          className="kt-menu__item"
+        >
+          <ListItem className="kt-menu__link w-100">
+            <i className="kt-menu__link-icon fa fa-plane" />
+            <span className="kt-menu__link-text">Flights</span>
           </ListItem>
         </NavLink>
-        <NavLink to="/clients" activeClassName='kt-menu__item--active' className="kt-menu__item">
-          <ListItem className="kt-menu__link w-100" >
-            <i className='kt-menu__link-icon fa fa-users'/>
-            <span className="kt-menu__link-text">Clients</span>
-          </ListItem>
-        </NavLink>
-        <NavLink to="/chat" activeClassName='kt-menu__item--active' className="kt-menu__item">
-          <ListItem className="kt-menu__link w-100" >
-            <i className='kt-menu__link-icon fa fa-comment'/>
-            <span className="kt-menu__link-text">Messages</span>
-            {
-              unseen && <i className='fa fa-dot-circle text-danger'/>
-            }
-
+        <NavLink
+          to="/admins"
+          activeClassName="kt-menu__item--active"
+          className="kt-menu__item"
+        >
+          <ListItem className="kt-menu__link w-100">
+            <i className="kt-menu__link-icon fa fa-briefcase" />
+            <span className="kt-menu__link-text">Admins</span>
           </ListItem>
         </NavLink>
       </List>

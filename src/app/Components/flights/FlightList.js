@@ -7,7 +7,8 @@ const FlightList = ({
   setResponse,
   readOnly,
   bookingStatuses,
-  updateTipsCancel
+  updateTipsCancel,
+  userType
 }) => {
   const [showDetails, setShowDetails] = useState(false);
   const [details, setDetails] = useState(null);
@@ -76,6 +77,7 @@ const FlightList = ({
         readOnly={readOnly}
         updateTipsCancel={updateTipsCancel}
         bookingStatus={bookingStatus}
+        userType={userType}
       />
     </React.Fragment>
   );

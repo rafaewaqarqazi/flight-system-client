@@ -1,49 +1,60 @@
-import React, {useEffect, useState} from "react";
-import { Calendar, momentLocalizer } from 'react-big-calendar'
-import moment from 'moment'
-import {Portlet, PortletBody, PortletHeader} from "../../partials/content/Portlet";
-import {useSelector} from "react-redux";
-import _ from 'lodash'
-import {getAllCases} from "../../crud/user.crud";
-const localizer = momentLocalizer(moment)
-export default function Dashboard({userType = 'lawyer'}) {
-  const { user } = useSelector(
-    ({  auth: { user } }) => ({
-      user
-    })
-  );
-  const [eventsList, setEventsList] = useState([])
+import React, { useEffect, useState } from "react";
+import { Calendar, momentLocalizer } from "react-big-calendar";
+import moment from "moment";
+import {
+  Portlet,
+  PortletBody,
+  PortletHeader
+} from "../../partials/content/Portlet";
+import { getAllTrips } from "../../crud/flights.crud";
+const localizer = momentLocalizer(moment);
+export default function Dashboard() {
+  const [eventsList, setEventsList] = useState([]);
   useEffect(() => {
-    getAllCases({userId: user._id, userType})
+    getAllTrips()
       .then(result => {
-        console.log('result', result)
-        if (result.data.success) {
-          const hearings =  result.data.cases.map(c => c.details.hearings)
-          console.log('hearings', hearings)
-          const events = _.flattenDeep(hearings).map(hearing => {
-            return {
-              title: hearing.title,
-              start: new Date(hearing.date) ,
-              end: new Date(hearing.date) ,
-              allDay: true
-            }
-          })
-          console.log('events', events)
-          setEventsList(events)
-        } else {
-          console.log('Something went wrong')
-        }
+        setTimeout(() => {
+          const trips = result.data.trips
+            .filter(
+              trip =>
+                trip.bookingStatus !== "Pending" &&
+                trip.bookingStatus !== "Canceled"
+            )
+            .map(trip => trip.details);
+          let events = [];
+          trips.map(trip => {
+            trip.itineraries.map((intinerary, index) => {
+              intinerary.segments.map(segment => {
+                events = [
+                  ...events,
+                  {
+                    title: `${
+                      index === 0 ? "Going" : "Return"
+                    }-Departure From ${segment.departure.iataCode}`,
+                    start: new Date(segment?.departure?.at),
+                    end: new Date(segment?.departure?.at)
+                  },
+                  {
+                    title: `${index === 0 ? "Going" : "Return"}-Arrival at ${
+                      segment.arrival.iataCode
+                    }`,
+                    start: new Date(segment?.arrival?.at),
+                    end: new Date(segment?.arrival?.at)
+                  }
+                ];
+              });
+            });
+          });
+          setEventsList(events);
+        }, 1000);
       })
-      .catch(error => console.log('error', error.message))
-
-  }, [])
+      .catch(error => console.log("error", error.message));
+  }, []);
 
   return (
-    <div className='pb-5'>
+    <div className="pb-5">
       <Portlet className="kt-portlet--height-fluid-half kt-portlet--border-bottom-brand">
-        <PortletHeader
-          title='Cases'
-        />
+        <PortletHeader title="All Trips" />
         <PortletBody>
           <Calendar
             localizer={localizer}
