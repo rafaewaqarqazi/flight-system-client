@@ -3,9 +3,13 @@ import { Button, Modal, Table } from "react-bootstrap";
 import moment from "moment";
 import clsx from "clsx";
 import Login from "../../pages/auth/Login";
-import { bookFlight, changeFlightStatus } from "../../crud/flights.crud";
+import {
+  bookFlight,
+  changeFlightStatus,
+  checkoutForPayment
+} from "../../crud/flights.crud";
 import { shallowEqual, useSelector } from "react-redux";
-
+import StripeCheckout from "react-stripe-checkout";
 const FlightDetails = ({
   details,
   showDetails,
@@ -120,6 +124,56 @@ const FlightDetails = ({
   const handleLogin = () => {
     setShowLogin(false);
     setShowDetails(true);
+  };
+  const makePayment = token => {
+    console.log("token", token);
+    checkoutForPayment({
+      token,
+      amount: parseInt(details?.price?.total, 10) * 100,
+      flightId: bookingStatus._id
+    })
+      .then(result => {
+        setShowDetails(false);
+        setDetails(null);
+        if (!result.data.error) {
+          updateTipsCancel(bookingStatus._id, "Confirmed");
+          setResponse({
+            success: {
+              show: true,
+              message: `Booking Confirmed Successfully`
+            },
+            error: {
+              show: false,
+              message: ""
+            }
+          });
+        } else {
+          setResponse({
+            success: {
+              show: false,
+              message: ""
+            },
+            error: {
+              show: true,
+              message: result.data.message
+            }
+          });
+        }
+      })
+      .catch(error => {
+        setShowDetails(false);
+        setDetails(null);
+        setResponse({
+          success: {
+            show: false,
+            message: ""
+          },
+          error: {
+            show: true,
+            message: "Could not make payment at the moment"
+          }
+        });
+      });
   };
   return (
     <React.Fragment>
@@ -239,7 +293,7 @@ const FlightDetails = ({
               >
                 Book Now
               </button>
-            ) : (
+            ) : bookingStatus?.bookingStatus === "Pending" ? (
               <button
                 className={`btn btn-primary btn-elevate kt-login__btn-primary ${clsx(
                   {
@@ -252,6 +306,29 @@ const FlightDetails = ({
               >
                 Cancel Booking
               </button>
+            ) : (
+              <StripeCheckout
+                token={makePayment}
+                stripeKey={
+                  "pk_test_51HLtFDCzlUjqqV4cLqsB8OvMpfcaVDzIhl9HJAzf2trhhw3wEdQrIjR26zvooiOdLS1pqsxdW6xpbped5ObJUSIf0069JxvS7k"
+                }
+                name="PaymentForFlight"
+                amount={parseInt(details?.price?.total, 10) * 100}
+                currency="PKR"
+              >
+                <button
+                  className={`btn btn-primary btn-elevate kt-login__btn-primary ${clsx(
+                    {
+                      "kt-spinner kt-spinner--right kt-spinner--md kt-spinner--light": loadingBooking
+                    }
+                  )}`}
+                  disabled={bookingStatus?.bookingStatus !== "Approved"}
+                  style={loadingButtonStyle}
+                  // onClick={() => handleClickChangeStatus("Canceled")}
+                >
+                  Confirm To Checkout
+                </button>
+              </StripeCheckout>
             )
           ) : (
             <button

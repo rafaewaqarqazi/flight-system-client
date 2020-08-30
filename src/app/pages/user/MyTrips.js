@@ -136,16 +136,6 @@ const MyTrips = ({ userType = "admin" }) => {
   };
   return (
     <div className="pb-5">
-      <AlertSuccess
-        show={response.success.show}
-        message={response.success.message}
-        handleClose={closeAlert}
-      />
-      <AlertError
-        show={response.error.show}
-        message={response.error.message}
-        handleClose={closeAlert}
-      />
       <Portlet className="kt-portlet--height-fluid-half kt-portlet--border-bottom-brand">
         <PortletHeader
           title="Trips"
@@ -182,6 +172,16 @@ const MyTrips = ({ userType = "admin" }) => {
           }
         />
         <PortletBody>
+          <AlertSuccess
+            show={response.success.show}
+            message={response.success.message}
+            handleClose={closeAlert}
+          />
+          <AlertError
+            show={response.error.show}
+            message={response.error.message}
+            handleClose={closeAlert}
+          />
           {tripsLoading ? (
             <div
               className="d-flex align-items-center justify-content-center"

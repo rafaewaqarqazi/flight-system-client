@@ -8,6 +8,7 @@ export const GET_USER_TRIPS = "/api/flights/user-trips";
 export const GET_ALL_TRIPS = "/api/flights/all-trips";
 export const BOOK_FLIGHT = "/api/flights/book";
 export const CHANGE_FLIGHT_STATUS = "/api/flights/status";
+export const CHECKOUT_PAYMENT = "/api/flights/confirm";
 
 export function getOneWayFlights({
   origin,
@@ -46,6 +47,9 @@ export function bookFlight({ details, userId }) {
 
 export function changeFlightStatus({ flightId, status }) {
   return axios.put(CHANGE_FLIGHT_STATUS, { flightId, status });
+}
+export function checkoutForPayment({ token, amount, flightId }) {
+  return axios.post(CHECKOUT_PAYMENT, { token, amount, flightId });
 }
 
 export function getUserTrips(userId) {
