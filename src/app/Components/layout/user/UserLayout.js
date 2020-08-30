@@ -9,8 +9,6 @@ import { withRouter } from "react-router-dom";
 import HTMLClassService from "../../../../_metronic/layout/HTMLClassService";
 import { useLayoutStyles } from "../../../../utils/material-styles/layoutStyles";
 import HeaderUser from "../../../../_metronic/layout/header/HeaderUser";
-import { connect } from "react-redux";
-import * as chat from "../../../store/ducks/chat.duck";
 const htmlClassService = new HTMLClassService();
 const UserLayout = ({ children, layoutConfig, nobg }) => {
   const classes = useLayoutStyles();
@@ -19,8 +17,8 @@ const UserLayout = ({ children, layoutConfig, nobg }) => {
   window.scrollTo(0, 0);
   const bg = !nobg
     ? {
-        backgroundImage: "url(/media/bg/bg-9.jpg)",
-        backgroundSize: "100% 470px",
+        backgroundImage: "url(/media/bg/main.jpg)",
+        backgroundSize: "100%",
         backgroundRepeat: "no-repeat",
         backgroundAttachment: "fixed"
       }
@@ -65,4 +63,4 @@ const UserLayout = ({ children, layoutConfig, nobg }) => {
   );
 };
 
-export default withRouter(connect(null, chat.actions)(UserLayout));
+export default withRouter(UserLayout);

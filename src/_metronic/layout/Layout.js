@@ -16,9 +16,8 @@ import "../../_metronic/_assets/sass/global/layout/header/skins/menu/light.scss"
 import "../../_metronic/_assets/sass/global/layout/brand/skins/dark.scss";
 import "../../_metronic/_assets/sass/global/layout/aside/skins/dark.scss";
 import clsx from "clsx";
-import Hidden from "@material-ui/core/Hidden";
+import { Hidden } from "@material-ui/core";
 import { useLayoutStyles } from "../../utils/material-styles/layoutStyles";
-import * as chat from "../../app/store/ducks/chat.duck";
 const htmlClassService = new HTMLClassService();
 
 function Layout({ children, layoutConfig }) {
@@ -76,17 +75,11 @@ function Layout({ children, layoutConfig }) {
   );
 }
 
-const mapStateToProps = ({
-  builder: { layoutConfig },
-  auth: { user },
-  chat
-}) => ({
+const mapStateToProps = ({ builder: { layoutConfig }, auth: { user } }) => ({
   user,
-  chat,
-  socket: chat.socket,
   layoutConfig,
   selfLayout: objectPath.get(layoutConfig, "self.layout"),
   asideDisplay: objectPath.get(layoutConfig, "aside.self.display")
 });
 
-export default withRouter(connect(mapStateToProps, chat.actions)(Layout));
+export default withRouter(connect(mapStateToProps)(Layout));

@@ -1,38 +1,53 @@
-import React, {useState} from 'react';
-import {Dropdown, DropdownItem, DropdownMenu, DropdownToggle} from "reactstrap";
-import {practiceAreas} from "../../utils/practiceAreas";
-const Filters = ({filters, handleChangeFilters}) => {
-  const [dropdown, setDropdown] = useState({
-    department: false,
-    category: false,
-    type: false
-  })
+import React, { useState } from "react";
+import {
+  Dropdown,
+  DropdownItem,
+  DropdownMenu,
+  DropdownToggle
+} from "reactstrap";
+
+const Filters = ({ filters, handleChangeFilters }) => {
+  const [dropdown, setDropdown] = useState(false);
   return (
-    <div className='d-flex justify-content-sm-between flex-wrap align-items-center '>
-      <div className="d-flex align-items-center">
-        <Dropdown isOpen={dropdown.department} toggle={() => setDropdown({...dropdown, department: !dropdown.department})}>
-          <DropdownToggle
-            className="btn-bold btn-sm btn-label-brand border-0 mb-1 mb-sm-0"
-            caret
+    <div className="d-flex justify-content-sm-end flex-wrap align-items-center ">
+      <Dropdown isOpen={dropdown} toggle={() => setDropdown(!dropdown)}>
+        <DropdownToggle
+          className="btn-bold btn-sm btn-label-brand border-0 mb-1 mb-sm-0"
+          caret
+        >
+          {filters.bookingStatus !== ""
+            ? filters.bookingStatus
+            : "Select Booking Status"}
+        </DropdownToggle>
+        <DropdownMenu>
+          <DropdownItem
+            onClick={() => handleChangeFilters("bookingStatus", "")}
           >
-            {filters.practiceArea !== '' ? filters.practiceArea : 'Select Area of Practice'}
-          </DropdownToggle>
+            All
+          </DropdownItem>
 
-          <DropdownMenu className='dropdown-scroll'>
-            <DropdownItem onClick={() => handleChangeFilters('practiceArea', '')} >All</DropdownItem>
-            {
-              practiceAreas.map(practiceArea => (
-                <DropdownItem onClick={() => handleChangeFilters('practiceArea', practiceArea)} key={practiceArea}>{practiceArea}</DropdownItem>
-              ))
-            }
-          </DropdownMenu>
-
-        </Dropdown>
-        <div className="position-relative">
-          <input type="text" className='form-control form-control-sm ml-2 ' placeholder='Search for Lawyer' value={filters.search} onChange={(event) => handleChangeFilters('search', event.target.value)}/>
-          <span className='fa fa-search position-absolute ' style={{top: '30%', right: 0}}/>
-        </div>
-      </div>
+          <DropdownItem
+            onClick={() => handleChangeFilters("bookingStatus", "Pending")}
+          >
+            Pending
+          </DropdownItem>
+          <DropdownItem
+            onClick={() => handleChangeFilters("bookingStatus", "Approved")}
+          >
+            Approved
+          </DropdownItem>
+          <DropdownItem
+            onClick={() => handleChangeFilters("bookingStatus", "Confirmed")}
+          >
+            Confirmed
+          </DropdownItem>
+          <DropdownItem
+            onClick={() => handleChangeFilters("bookingStatus", "Canceled")}
+          >
+            Canceled
+          </DropdownItem>
+        </DropdownMenu>
+      </Dropdown>
     </div>
   );
 };
