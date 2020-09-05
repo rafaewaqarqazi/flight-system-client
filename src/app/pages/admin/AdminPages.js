@@ -10,6 +10,7 @@ import MyTrips from "../user/MyTrips";
 import WorldTour from "./World-tour";
 import UmrahDeals from "./UmrahDeals";
 import CreateWorldTour from "./CreateWorldTour";
+import WorldTourDetails from "./WorldTourDetails";
 export default function AdminPages() {
   return (
     <Suspense fallback={<LayoutSplashScreen />}>
@@ -20,7 +21,8 @@ export default function AdminPages() {
         }
         <AdminRoute path="/dashboard" component={Dashboard} />
         <AdminRoute path="/flights" component={MyTrips} />
-        <AdminRoute path="/world-tour" component={WorldTour} exact/>
+        <AdminRoute path="/world-tour" component={WorldTour} exact />
+        <AdminRoute path="/world-tour/details" component={WorldTourDetails} />
         <AdminRoute path="/world-tour/create" component={CreateWorldTour} />
         <AdminRoute path="/umrah-deals" component={UmrahDeals} />
         <AdminRoute path="/account" component={Account} exact />

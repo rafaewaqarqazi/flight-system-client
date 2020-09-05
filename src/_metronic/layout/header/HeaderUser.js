@@ -20,13 +20,29 @@ const HeaderUser = () => {
         <div className="container d-flex align-items-center">
           <Brand />
           {isAuthorized && user.role === "1" && (
-            <NavLink
-              to="/my-trips"
-              activeClassName={"active"}
-              className="btn btn-label btn-sm ml-5"
-            >
-              My Trips
-            </NavLink>
+            <>
+              <NavLink
+                to="/my-trips"
+                activeClassName={"active"}
+                className="btn btn-label btn-sm ml-5"
+              >
+                My Trips
+              </NavLink>
+              <NavLink
+                to="/world-tour"
+                activeClassName={"active"}
+                className="btn btn-label btn-sm ml-2"
+              >
+                World Tour
+              </NavLink>
+              <NavLink
+                to="/my-trips"
+                activeClassName={"active"}
+                className="btn btn-label btn-sm ml-2"
+              >
+                Umrah Deals
+              </NavLink>
+            </>
           )}
         </div>
       </div>

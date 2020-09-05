@@ -10,6 +10,8 @@ import UserLayout from "../../Components/layout/user/UserLayout";
 import { shallowEqual, useSelector } from "react-redux";
 import KtContent from "../../../_metronic/layout/KtContent";
 import MyTrips from "./MyTrips";
+import WorldTour from "../admin/World-tour";
+import WorldTourDetails from "../admin/WorldTourDetails";
 
 const UserPages = () => {
   const { isAuthorized } = useSelector(
@@ -32,6 +34,27 @@ const UserPages = () => {
             <UserLayout>
               <KtContent>
                 <MyTrips userType="user" />
+              </KtContent>
+            </UserLayout>
+          )}
+        />
+        <UserRoute
+          path="/world-tour"
+          component={() => (
+            <UserLayout>
+              <KtContent>
+                <WorldTour />
+              </KtContent>
+            </UserLayout>
+          )}
+          exact
+        />
+        <UserRoute
+          path="/world-tour/details"
+          component={() => (
+            <UserLayout>
+              <KtContent>
+                <WorldTourDetails />
               </KtContent>
             </UserLayout>
           )}
