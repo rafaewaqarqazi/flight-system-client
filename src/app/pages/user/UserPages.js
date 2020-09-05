@@ -12,6 +12,8 @@ import KtContent from "../../../_metronic/layout/KtContent";
 import MyTrips from "./MyTrips";
 import WorldTour from "../admin/World-tour";
 import WorldTourDetails from "../admin/WorldTourDetails";
+import UmrahDeals from "../admin/UmrahDeals";
+import UmrahDealsDetails from "../admin/UmrahDealsDetails";
 
 const UserPages = () => {
   const { isAuthorized } = useSelector(
@@ -55,6 +57,27 @@ const UserPages = () => {
             <UserLayout>
               <KtContent>
                 <WorldTourDetails />
+              </KtContent>
+            </UserLayout>
+          )}
+        />
+        <UserRoute
+          path="/umrah-deals"
+          component={() => (
+            <UserLayout>
+              <KtContent>
+                <UmrahDeals />
+              </KtContent>
+            </UserLayout>
+          )}
+          exact
+        />
+        <UserRoute
+          path="/umrah-deals/details"
+          component={() => (
+            <UserLayout>
+              <KtContent>
+                <UmrahDealsDetails />
               </KtContent>
             </UserLayout>
           )}

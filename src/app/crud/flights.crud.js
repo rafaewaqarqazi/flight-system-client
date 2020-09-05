@@ -12,9 +12,14 @@ export const CHECKOUT_PAYMENT = "/api/flights/confirm";
 export const BOOK_WORLD_TOUR = "/api/flights/world-tour/book";
 export const DELETE_WORLD_TOUR_PACKAGE =
   "/api/flights/world-tour/delete-package";
+export const DELETE_UMRAH_DEAL_PACKAGE =
+  "/api/flights/umrah-deals/delete-package";
 export const CREATE_WORLD_TOUR = "/api/flights/create/world-tour/images";
+export const CREATE_UMRAH_DEALS = "/api/flights/create/umrah-deals/images";
 export const GET_WORLD_TOUR = "/api/flights/world-tour";
+export const GET_UMRAH_DEALS = "/api/flights/umrah-deals";
 export const GET_WORLD_TOUR_PACKAGE = "/api/flights/world-tour/package";
+export const GET_UMRAH_DEAL_PACKAGE = "/api/flights/umrah-deals/package";
 
 export function getOneWayFlights({
   origin,
@@ -66,17 +71,31 @@ export function deleteWorldTourPackage(data) {
   return axios.put(DELETE_WORLD_TOUR_PACKAGE, data);
 }
 
+export function deleteUmrahDealPackage(data) {
+  return axios.put(DELETE_UMRAH_DEAL_PACKAGE, data);
+}
+
 export function createWorldTour(data) {
   return axios.post(CREATE_WORLD_TOUR, data);
+}
+
+export function createUmrahDeals(data) {
+  return axios.post(CREATE_UMRAH_DEALS, data);
 }
 
 export function getWorldTour() {
   return axios.get(GET_WORLD_TOUR);
 }
+export function getUmrahDeals() {
+  return axios.get(GET_UMRAH_DEALS);
+}
 export function getWorldTourPackage({ country, packageId }) {
   return axios.get(
     `${GET_WORLD_TOUR_PACKAGE}?country=${country}&packageId=${packageId}`
   );
+}
+export function getUmrahDealPackage({ dealId }) {
+  return axios.get(`${GET_UMRAH_DEAL_PACKAGE}?dealId=${dealId}`);
 }
 
 export function getUserTrips(userId) {

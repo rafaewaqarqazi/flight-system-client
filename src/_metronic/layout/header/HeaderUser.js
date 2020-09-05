@@ -36,7 +36,7 @@ const HeaderUser = () => {
                 World Tour
               </NavLink>
               <NavLink
-                to="/my-trips"
+                to="/umrah-deals"
                 activeClassName={"active"}
                 className="btn btn-label btn-sm ml-2"
               >

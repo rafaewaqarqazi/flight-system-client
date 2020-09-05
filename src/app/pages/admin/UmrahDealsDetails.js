@@ -1,0 +1,277 @@
+import React, { useEffect, useState } from "react";
+import { useLocation, useHistory } from "react-router-dom";
+import {
+  Portlet,
+  PortletBody,
+  PortletHeader,
+  PortletHeaderToolbar
+} from "../../partials/content/Portlet";
+import {
+  getUmrahDealPackage,
+  deleteUmrahDealPackage,
+  bookWorldTour
+} from "../../crud/flights.crud";
+import { Modal, Spinner } from "react-bootstrap";
+import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
+import CKEditor from "@ckeditor/ckeditor5-react";
+import StripeCheckout from "react-stripe-checkout";
+import { shallowEqual, useSelector } from "react-redux";
+import AlertSuccess from "../../Components/alerts/AlertSuccess";
+import AlertError from "../../Components/alerts/AlertError";
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
+const UmrahDealsDetails = () => {
+  const query = useQuery();
+  const history = useHistory();
+  const [loading, setLoading] = useState(false);
+  const [deleteConfirm, setDeleteConfirm] = useState(false);
+  const [deals, setDeals] = useState(null);
+  const [response, setResponse] = useState({
+    success: {
+      show: false,
+      message: ""
+    },
+    error: {
+      show: false,
+      message: ""
+    }
+  });
+  const closeAlert = () => {
+    setResponse({
+      success: {
+        show: false,
+        message: ""
+      },
+      error: {
+        show: false,
+        message: ""
+      }
+    });
+  };
+  const { user } = useSelector(
+    ({ auth }) => ({
+      user: auth.user
+    }),
+    shallowEqual
+  );
+  useEffect(() => {
+    setLoading(true);
+    const deal = query.get("deal");
+    if (deal) {
+      getUmrahDealPackage({ dealId: deal })
+        .then(result => {
+          console.log("result", result);
+          setDeals(result.data.deals[0]);
+          setTimeout(() => {
+            setLoading(false);
+          }, 1000);
+        })
+        .catch(error => {
+          console.log("error", error);
+        });
+    } else {
+      history.push("/umrah-deals");
+    }
+  }, []);
+  const makePayment = token => {
+    bookWorldTour({
+      token,
+      amount: parseInt(deals?.details.packages.price, 10) * 100,
+      dealId: deals._id,
+      packageId: deals.details.packages._id,
+      userId: user._id
+    })
+      .then(result => {
+        const bookedBy = deals.details.packages.bookedBy || [];
+        setDeals({
+          ...deals,
+          details: {
+            ...deals.details,
+            packages: {
+              ...deals.details.packages,
+              bookedBy: [...bookedBy, user._id]
+            }
+          }
+        });
+
+        setResponse({
+          success: {
+            show: true,
+            message: `Booking Confirmed Successfully`
+          },
+          error: {
+            show: false,
+            message: ""
+          }
+        });
+      })
+      .catch(error => {
+        setResponse({
+          success: {
+            show: false,
+            message: ""
+          },
+          error: {
+            show: true,
+            message: "Could not make payment at the moment"
+          }
+        });
+      });
+  };
+  const handleDeletePackage = () => {
+    deleteUmrahDealPackage({
+      dealId: deals._id
+    })
+      .then(res => {
+        setDeleteConfirm(false);
+        setResponse({
+          success: {
+            show: true,
+            message: `Package Deleted Successfully!`
+          },
+          error: {
+            show: false,
+            message: ""
+          }
+        });
+        setTimeout(() => {
+          history.push("/umrah-deals");
+        }, 2000);
+      })
+      .catch(() => {
+        setResponse({
+          success: {
+            show: false,
+            message: ""
+          },
+          error: {
+            show: true,
+            message: "Could not delete package"
+          }
+        });
+      });
+  };
+  return (
+    <div className="pb-5">
+      <Portlet className="kt-portlet--height-fluid-half kt-portlet--border-bottom-brand">
+        <PortletHeader
+          title={deals?.details.packages.title}
+          toolbar={
+            <PortletHeaderToolbar>
+              {user.role === "1" ? (
+                <StripeCheckout
+                  token={makePayment}
+                  stripeKey={
+                    "pk_test_51HLtFDCzlUjqqV4cLqsB8OvMpfcaVDzIhl9HJAzf2trhhw3wEdQrIjR26zvooiOdLS1pqsxdW6xpbped5ObJUSIf0069JxvS7k"
+                  }
+                  name="PaymentForFlight"
+                  amount={parseInt(deals?.details.packages.price, 10) * 100}
+                  currency="PKR"
+                >
+                  <button
+                    className={`btn btn-primary btn-elevate kt-login__btn-primary `}
+                    disabled={
+                      deals?.details.packages.bookedBy?.filter(
+                        bb => bb === user._id
+                      ).length > 0
+                    }
+                    // style={loadingButtonStyle}
+                    // onClick={() => handleClickChangeStatus("Canceled")}
+                  >
+                    Book Now
+                  </button>
+                </StripeCheckout>
+              ) : (
+                <button
+                  className={`btn btn-danger btn-elevate kt-login__btn-primary `}
+                  // style={loadingButtonStyle}
+                  onClick={() => setDeleteConfirm(true)}
+                >
+                  Delete Package
+                </button>
+              )}
+            </PortletHeaderToolbar>
+          }
+        />
+        <PortletBody>
+          <AlertSuccess
+            show={response.success.show}
+            message={response.success.message}
+            handleClose={closeAlert}
+          />
+          <AlertError
+            show={response.error.show}
+            message={response.error.message}
+            handleClose={closeAlert}
+          />
+          {loading ? (
+            <div
+              className="d-flex align-items-center justify-content-center"
+              style={{ height: 150 }}
+            >
+              <Spinner animation={"grow"} />
+            </div>
+          ) : (
+            <div>
+              <div style={{ height: 280 }}>
+                <img
+                  src={`/images/${deals?.details.packages.image}`}
+                  alt={deals?.details.packages.title}
+                  style={{ width: "100%", height: "100%", objectFit: "cover" }}
+                />
+              </div>
+              <div className="mt-5">
+                <CKEditor
+                  editor={ClassicEditor}
+                  data={deals?.details.packages.description}
+                  disabled
+                  config={{
+                    toolbar: null
+                  }}
+                />
+              </div>
+            </div>
+          )}
+          <div className="mt-3">
+            <h6>
+              Number of People:{" "}
+              <span className="font-weight-bold">
+                {" "}
+                {deals?.details.packages.numberOfPeople}
+              </span>
+            </h6>
+            <h6>
+              Number of Days:{" "}
+              <span className="font-weight-bold">
+                {deals?.details.packages.numberOfDays}
+              </span>
+            </h6>
+            <h6>
+              Total Price:{" "}
+              <span className="font-weight-bold">
+                PKR {deals?.details.packages.price}
+              </span>
+            </h6>
+          </div>
+        </PortletBody>
+      </Portlet>
+      <Modal show={deleteConfirm} onHide={() => setDeleteConfirm(false)}>
+        <Modal.Header closeButton>
+          <Modal.Title>Confirm</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>Are you sure you want to delete this package?</Modal.Body>
+        <Modal.Footer>
+          <button
+            className="btn btn-danger btn-outlined"
+            onClick={handleDeletePackage}
+          >
+            Delete Now
+          </button>
+        </Modal.Footer>
+      </Modal>
+    </div>
+  );
+};
+
+export default UmrahDealsDetails;
