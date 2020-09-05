@@ -9,6 +9,8 @@ export const GET_ALL_TRIPS = "/api/flights/all-trips";
 export const BOOK_FLIGHT = "/api/flights/book";
 export const CHANGE_FLIGHT_STATUS = "/api/flights/status";
 export const CHECKOUT_PAYMENT = "/api/flights/confirm";
+export const CREATE_WORLD_TOUR = "/api/flights/create/world-tour/images";
+export const GET_WORLD_TOUR = "/api/flights/world-tour";
 
 export function getOneWayFlights({
   origin,
@@ -50,6 +52,14 @@ export function changeFlightStatus({ flightId, status }) {
 }
 export function checkoutForPayment({ token, amount, flightId }) {
   return axios.post(CHECKOUT_PAYMENT, { token, amount, flightId });
+}
+
+export function createWorldTour(data) {
+  return axios.post(CREATE_WORLD_TOUR, data);
+}
+
+export function getWorldTour() {
+  return axios.get(GET_WORLD_TOUR);
 }
 
 export function getUserTrips(userId) {

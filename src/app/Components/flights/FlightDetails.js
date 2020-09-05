@@ -280,7 +280,7 @@ const FlightDetails = ({
           <Button variant="secondary" onClick={() => setShowDetails(false)}>
             Close
           </Button>
-          {userType === "user" ? (
+          {(userType === "user" || !isAuthorized || isAuthorized) && userType !== 'admin' ? (
             !readOnly ? (
               <button
                 className={`btn btn-primary btn-elevate kt-login__btn-primary ${clsx(

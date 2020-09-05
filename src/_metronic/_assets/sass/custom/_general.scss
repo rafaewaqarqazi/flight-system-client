@@ -26,3 +26,11 @@
   max-height: 350px;
   overflow-y: auto;
 }
+.world-tour__title{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  overflow: hidden
+}

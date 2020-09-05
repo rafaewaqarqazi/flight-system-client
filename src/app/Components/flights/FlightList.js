@@ -57,7 +57,7 @@ const FlightList = ({
                   <button
                     className="btn btn-label btn-sm"
                     onClick={() =>
-                      handleClickShowDetails(flight, bookingStatuses[index])
+                      handleClickShowDetails(flight, bookingStatuses ? bookingStatuses[index] : {})
                     }
                   >
                     Details

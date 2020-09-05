@@ -9,7 +9,7 @@ import React from "react";
 import { Route, Switch, withRouter } from "react-router-dom";
 import { shallowEqual, useSelector } from "react-redux";
 import { useLastLocation } from "react-router-last-location";
-import AdminPages from "../pages/lawyer/AdminPages";
+import AdminPages from "../pages/admin/AdminPages";
 import ErrorsPage from "../pages/errors/ErrorsPage";
 import LogoutPage from "../pages/auth/Logout";
 import { LayoutContextProvider } from "../../_metronic";
