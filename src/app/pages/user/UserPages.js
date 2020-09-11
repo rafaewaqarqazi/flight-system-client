@@ -40,7 +40,7 @@ const UserPages = () => {
             </UserLayout>
           )}
         />
-        <UserRoute
+        <Route
           path="/world-tour"
           component={() => (
             <UserLayout>
@@ -51,7 +51,7 @@ const UserPages = () => {
           )}
           exact
         />
-        <UserRoute
+        <Route
           path="/world-tour/details"
           component={() => (
             <UserLayout>
@@ -61,7 +61,7 @@ const UserPages = () => {
             </UserLayout>
           )}
         />
-        <UserRoute
+        <Route
           path="/umrah-deals"
           component={() => (
             <UserLayout>
@@ -72,7 +72,7 @@ const UserPages = () => {
           )}
           exact
         />
-        <UserRoute
+        <Route
           path="/umrah-deals/details"
           component={() => (
             <UserLayout>

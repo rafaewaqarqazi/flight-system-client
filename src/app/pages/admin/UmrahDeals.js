@@ -65,7 +65,7 @@ const UmrahDeals = () => {
           title="Umrah Deals"
           toolbar={
             <PortletHeaderToolbar>
-              {user.role === "1" && (
+              {user?.role === "1" && (
                 <Dropdown
                   isOpen={dropdown}
                   toggle={() => setDropdown(!dropdown)}
@@ -91,7 +91,7 @@ const UmrahDeals = () => {
                 </Dropdown>
               )}
 
-              {user.role === "2" && (
+              {user?.role === "2" && (
                 <Link to="/umrah-deals/create" className="btn btn-label btn-sm">
                   <i className="fa fa-plus" /> Add New Package
                 </Link>

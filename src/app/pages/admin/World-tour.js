@@ -70,7 +70,7 @@ const WorldTour = () => {
           title="World Tour"
           toolbar={
             <PortletHeaderToolbar>
-              {user.role === "1" && (
+              {user?.role === "1" && (
                 <Dropdown
                   isOpen={dropdown}
                   toggle={() => setDropdown(!dropdown)}
@@ -116,7 +116,7 @@ const WorldTour = () => {
                   ))}
                 </DropdownMenu>
               </Dropdown>
-              {user.role === "2" && (
+              {user?.role === "2" && (
                 <Link to="/world-tour/create" className="btn btn-label btn-sm">
                   <i className="fa fa-plus" /> Add New Tour
                 </Link>
@@ -157,6 +157,7 @@ const WorldTour = () => {
                         to={`/world-tour/details?country=${filters.country}&package=${pack._id}`}
                         className="col-12 col-sm-6 col-md-4 scale-up"
                         style={{ color: "inherit" }}
+                        key={pack._id}
                       >
                         <div style={{ border: "1px solid #f7f7f7" }}>
                           <div style={{ height: 200 }}>

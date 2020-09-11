@@ -18,12 +18,14 @@ import StripeCheckout from "react-stripe-checkout";
 import { shallowEqual, useSelector } from "react-redux";
 import AlertSuccess from "../../Components/alerts/AlertSuccess";
 import AlertError from "../../Components/alerts/AlertError";
+import Login from "../auth/Login";
 const useQuery = () => {
   return new URLSearchParams(useLocation().search);
 };
 const UmrahDealsDetails = () => {
   const query = useQuery();
   const history = useHistory();
+  const [showLogin, setShowLogin] = useState(false);
   const [loading, setLoading] = useState(false);
   const [deleteConfirm, setDeleteConfirm] = useState(false);
   const [deals, setDeals] = useState(null);
@@ -159,36 +161,45 @@ const UmrahDealsDetails = () => {
           title={deals?.details.packages.title}
           toolbar={
             <PortletHeaderToolbar>
-              {user.role === "1" ? (
-                <StripeCheckout
-                  token={makePayment}
-                  stripeKey={
-                    "pk_test_51HLtFDCzlUjqqV4cLqsB8OvMpfcaVDzIhl9HJAzf2trhhw3wEdQrIjR26zvooiOdLS1pqsxdW6xpbped5ObJUSIf0069JxvS7k"
-                  }
-                  name="PaymentForFlight"
-                  amount={parseInt(deals?.details.packages.price, 10) * 100}
-                  currency="PKR"
-                >
-                  <button
-                    className={`btn btn-primary btn-elevate kt-login__btn-primary `}
-                    disabled={
-                      deals?.details.packages.bookedBy?.filter(
-                        bb => bb === user._id
-                      ).length > 0
+              {user ? (
+                user?.role === "1" ? (
+                  <StripeCheckout
+                    token={makePayment}
+                    stripeKey={
+                      "pk_test_51HLtFDCzlUjqqV4cLqsB8OvMpfcaVDzIhl9HJAzf2trhhw3wEdQrIjR26zvooiOdLS1pqsxdW6xpbped5ObJUSIf0069JxvS7k"
                     }
-                    // style={loadingButtonStyle}
-                    // onClick={() => handleClickChangeStatus("Canceled")}
+                    name="PaymentForFlight"
+                    amount={parseInt(deals?.details.packages.price, 10) * 100}
+                    currency="PKR"
                   >
-                    Book Now
+                    <button
+                      className={`btn btn-primary btn-elevate kt-login__btn-primary `}
+                      disabled={
+                        deals?.details.packages.bookedBy?.filter(
+                          bb => bb === user._id
+                        ).length > 0
+                      }
+                      // style={loadingButtonStyle}
+                      // onClick={() => handleClickChangeStatus("Canceled")}
+                    >
+                      Book Now
+                    </button>
+                  </StripeCheckout>
+                ) : (
+                  <button
+                    className={`btn btn-danger btn-elevate kt-login__btn-primary `}
+                    // style={loadingButtonStyle}
+                    onClick={() => setDeleteConfirm(true)}
+                  >
+                    Delete Package
                   </button>
-                </StripeCheckout>
+                )
               ) : (
                 <button
-                  className={`btn btn-danger btn-elevate kt-login__btn-primary `}
-                  // style={loadingButtonStyle}
-                  onClick={() => setDeleteConfirm(true)}
+                  className={`btn btn-primary btn-elevate kt-login__btn-primary `}
+                  onClick={() => setShowLogin(true)}
                 >
-                  Delete Package
+                  Book Now
                 </button>
               )}
             </PortletHeaderToolbar>
@@ -269,6 +280,14 @@ const UmrahDealsDetails = () => {
             Delete Now
           </button>
         </Modal.Footer>
+      </Modal>
+      <Modal show={showLogin} onHide={() => setShowLogin(false)} size="lg">
+        <Modal.Header closeButton>
+          <Modal.Title>Login</Modal.Title>
+        </Modal.Header>
+        <Modal.Body>
+          <Login isModal={true} handleLogin={() => setShowLogin(false)} />
+        </Modal.Body>
       </Modal>
     </div>
   );
