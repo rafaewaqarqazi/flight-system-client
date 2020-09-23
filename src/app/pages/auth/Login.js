@@ -6,7 +6,7 @@ import LoginForm from "../../Components/users/LoginForm";
 function Login({ isModal, handleLogin }) {
   return (
     <div className="kt-grid__item kt-grid__item--fluid  kt-grid__item--order-tablet-and-mobile-1  kt-login__wrapper">
-      <LoginLayout heading="Sign to Suits" isModal={isModal}>
+      <LoginLayout heading="Sign In" isModal={isModal}>
         <LoginForm isModal={isModal} handleLogin={handleLogin} />
       </LoginLayout>
     </div>
