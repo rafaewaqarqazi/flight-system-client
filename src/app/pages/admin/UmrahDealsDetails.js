@@ -11,7 +11,7 @@ import {
   deleteUmrahDealPackage,
   bookWorldTour
 } from "../../crud/flights.crud";
-import { Modal, Spinner } from "react-bootstrap";
+import { Modal, Spinner, Table } from "react-bootstrap";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import StripeCheckout from "react-stripe-checkout";
@@ -265,6 +265,33 @@ const UmrahDealsDetails = () => {
               </span>
             </h6>
           </div>
+          {user && user.role === "2" && (
+            <div className="mt-3">
+              <h4>Booked By:</h4>
+              <Table responsive>
+                <thead>
+                  <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Mobile No</th>
+                    <th>Passport No</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {deals?.details.packages.bookedBy?.map(bookedBy => (
+                    <tr key={bookedBy._id}>
+                      <td>{bookedBy.firstName}</td>
+                      <td>{bookedBy.lastName}</td>
+                      <td>{bookedBy.email}</td>
+                      <td>{bookedBy.mobileNo}</td>
+                      <td>{bookedBy.passportNo}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          )}
         </PortletBody>
       </Portlet>
       <Modal show={deleteConfirm} onHide={() => setDeleteConfirm(false)}>

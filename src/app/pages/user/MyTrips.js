@@ -100,6 +100,7 @@ const MyTrips = ({ userType = "admin" }) => {
     setFilteredData(
       trips.filter(trip => trip.bookingStatus.includes(filters.bookingStatus))
     );
+    setPageNo(1);
   }, [filters, trips]);
   const closeAlert = () => {
     setResponse({
@@ -205,7 +206,7 @@ const MyTrips = ({ userType = "admin" }) => {
                       ? (pageNo - 1) * perPage + perPage
                       : filteredData.length
                   )
-                  .map(trip => trip.details)}
+                  .map(trip => trip)}
                 readOnly={true}
                 bookingStatuses={filteredData.map(trip => ({
                   bookingStatus: trip.bookingStatus,
@@ -231,7 +232,7 @@ const MyTrips = ({ userType = "admin" }) => {
               perPage={perPage}
               handlePageChange={handlePageChange}
               handlePerPageChange={handlePerPageChange}
-              total={trips.length}
+              total={filteredData.length}
             />
           )}
         </PortletBody>

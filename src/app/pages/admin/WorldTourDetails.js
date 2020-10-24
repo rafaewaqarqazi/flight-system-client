@@ -19,7 +19,7 @@ import {
   DropdownMenu,
   DropdownToggle
 } from "reactstrap";
-import { Modal, Spinner } from "react-bootstrap";
+import { Modal, Spinner, Table } from "react-bootstrap";
 import ClassicEditor from "@ckeditor/ckeditor5-build-classic";
 import CKEditor from "@ckeditor/ckeditor5-react";
 import clsx from "clsx";
@@ -259,6 +259,33 @@ const WorldTourDetails = () => {
           <div className="text-right mt-3">
             <h5>Total Price: PKR {deals?.details.packages.price}</h5>
           </div>
+          {user && user.role === "2" && (
+            <div>
+              <h4>Booked By:</h4>
+              <Table responsive>
+                <thead>
+                  <tr>
+                    <th>First Name</th>
+                    <th>Last Name</th>
+                    <th>Email</th>
+                    <th>Mobile No</th>
+                    <th>Passport No</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {deals?.details.packages.bookedBy?.map(bookedBy => (
+                    <tr key={bookedBy._id}>
+                      <td>{bookedBy.firstName}</td>
+                      <td>{bookedBy.lastName}</td>
+                      <td>{bookedBy.email}</td>
+                      <td>{bookedBy.mobileNo}</td>
+                      <td>{bookedBy.passportNo}</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </Table>
+            </div>
+          )}
         </PortletBody>
       </Portlet>
       <Modal show={deleteConfirm} onHide={() => setDeleteConfirm(false)}>

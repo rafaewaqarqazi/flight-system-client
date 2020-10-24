@@ -138,6 +138,10 @@ const AccountPersonalInfoDetails = ({ user, fulfillUser }) => {
                   <div className="form-label">Country</div>
                   <h5>{user.country || "Not Provided"}</h5>
                 </div>
+                <div className="form-group col-6">
+                  <div className="form-label">Passport Number</div>
+                  <h5>{user.passportNo || "Not Provided"}</h5>
+                </div>
               </div>
             ) : (
               <div className="row">
@@ -147,7 +151,8 @@ const AccountPersonalInfoDetails = ({ user, fulfillUser }) => {
                     lastName: user.lastName,
                     address: user.address,
                     country: user.country,
-                    mobileNo: user.mobileNo
+                    mobileNo: user.mobileNo,
+                    passportNo: user.passportNo
                   }}
                   validate={editProfileValidations}
                   onSubmit={(
@@ -243,6 +248,22 @@ const AccountPersonalInfoDetails = ({ user, fulfillUser }) => {
                           />
                           <ErrorMessage
                             name="mobileNo"
+                            render={formErrorMessage}
+                          />
+                        </div>
+                      </div>
+                      <div className="form-group row">
+                        <label className="col-xl-3 col-lg-3 col-form-label">
+                          Passport Number
+                        </label>
+                        <div className="col-lg-9 col-xl-6">
+                          <Field
+                            className="form-control"
+                            name="passportNo"
+                            placeholder="000000000"
+                          />
+                          <ErrorMessage
+                            name="passportNo"
                             render={formErrorMessage}
                           />
                         </div>

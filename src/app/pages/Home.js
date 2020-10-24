@@ -128,11 +128,10 @@ const Home = () => {
                 getFlight(values)
                   .then(res => {
                     setSearched(true);
-                    setFlights(res.data.flights);
+                    setFlights(res.data.flights || []);
                     disableLoading();
                   })
                   .catch(e => {
-                    console.log("error", e.message);
                     disableLoading();
                     setSubmitting(false);
                   });
@@ -284,7 +283,9 @@ const Home = () => {
           <div
             className="w-100"
             style={{
-              margin: "0 -10px"
+              margin: "0 -10px",
+              background: "#fff",
+              borderRadius: 6
             }}
           >
             <AlertSuccess
@@ -316,7 +317,10 @@ const Home = () => {
                 <div className="col-3 font-weight-bold mb-4">Duration</div>
               </div>
 
-              <FlightList flights={flights} setResponse={setResponse} />
+              <FlightList
+                flights={flights.map(f => ({ details: f }))}
+                setResponse={setResponse}
+              />
             </div>
           )}
 
@@ -339,7 +343,7 @@ const Home = () => {
               </div>
             ) : (
               <div className="row mt-3">
-                {recommended.map(rec => (
+                {recommended?.map(rec => (
                   <a
                     className="p-4 align-items-center text-decoration-none col-6 col-sm-3 kt-portlet kt-portlet--border-bottom-brand scale-up"
                     href={`https://www.google.com/maps/search/?api=1&query=${rec.geoCode.latitude},${rec.geoCode.longitude}`}

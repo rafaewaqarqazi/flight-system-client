@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Button, Modal, Table } from "react-bootstrap";
+import { Alert, Button, Modal, Table } from "react-bootstrap";
 import moment from "moment";
 import clsx from "clsx";
 import Login from "../../pages/auth/Login";
@@ -10,8 +10,9 @@ import {
 } from "../../crud/flights.crud";
 import { shallowEqual, useSelector } from "react-redux";
 import StripeCheckout from "react-stripe-checkout";
+import { Link } from "react-router-dom";
 const FlightDetails = ({
-  details,
+  flight,
   showDetails,
   setShowDetails,
   setDetails,
@@ -45,7 +46,7 @@ const FlightDetails = ({
   const handleClickBookNow = () => {
     if (isAuthorized) {
       enableLoading();
-      bookFlight({ details, userId: user._id })
+      bookFlight({ details: flight.details, userId: user._id })
         .then(res => {
           console.log("res", res);
           setTimeout(() => {
@@ -129,7 +130,7 @@ const FlightDetails = ({
     console.log("token", token);
     checkoutForPayment({
       token,
-      amount: parseInt(details?.price?.total, 10) * 100,
+      amount: parseInt(flight.details?.price?.total, 10) * 100,
       flightId: bookingStatus._id
     })
       .then(result => {
@@ -175,6 +176,7 @@ const FlightDetails = ({
         });
       });
   };
+  console.log(flight);
   return (
     <React.Fragment>
       <Modal show={showDetails} onHide={() => setShowDetails(false)} size="lg">
@@ -182,6 +184,14 @@ const FlightDetails = ({
           <Modal.Title>Flight Details</Modal.Title>
         </Modal.Header>
         <Modal.Body>
+          {user && user.role !== "2" && !user.passportNo && (
+            <Alert show={true} onHide={() => {}} variant="warning">
+              Your Passport Number is missing Please complete your profile by
+              <Alert.Link>
+                <Link to="/account"> clicking here</Link>
+              </Alert.Link>
+            </Alert>
+          )}
           <h4 className="mb-3 col-12">Routes</h4>
           <Table responsive>
             <thead>
@@ -194,7 +204,7 @@ const FlightDetails = ({
               </tr>
             </thead>
             <tbody>
-              {details?.itineraries.map((itinerary, index) =>
+              {flight?.details?.itineraries.map((itinerary, index) =>
                 itinerary.segments.map((segment, i) => (
                   <tr key={`${index}-itineraries`}>
                     <td>
@@ -241,7 +251,7 @@ const FlightDetails = ({
               </tr>
             </thead>
             <tbody>
-              {details?.travelerPricings.map(tPricing => (
+              {flight?.details?.travelerPricings.map(tPricing => (
                 <tr>
                   <td>{tPricing.travelerType}</td>
                   <td>{tPricing.fareOption}</td>
@@ -271,16 +281,45 @@ const FlightDetails = ({
             </tbody>
           </Table>
           <hr />
+          {user && user.role === "2" && (
+            <>
+              <h4 className="mb-3 col-12">Booked By</h4>
+              <div className="row mx-2">
+                <div className="form-group col-6">
+                  <div className="form-label">First Name</div>
+                  <h5>{flight?.bookedBy?.firstName}</h5>
+                </div>
+                <div className="form-group col-6">
+                  <div className="form-label">Last Name</div>
+                  <h5>{flight?.bookedBy?.lastName}</h5>
+                </div>
+                <div className="form-group col-6">
+                  <div className="form-label">Email</div>
+                  <h5>{flight?.bookedBy?.email || "Not Provided"}</h5>
+                </div>
+                <div className="form-group col-6">
+                  <div className="form-label">Mobile No</div>
+                  <h5>{flight?.bookedBy?.mobileNo || "Not Provided"}</h5>
+                </div>
+                <div className="form-group col-6">
+                  <div className="form-label">Passport Number</div>
+                  <h5>{flight?.bookedBy?.passportNo || "Not Provided"}</h5>
+                </div>
+              </div>
+            </>
+          )}
+
           <div className="p-3 text-right">
             <div>Total Price</div>
-            {details?.price.currency}-{details?.price?.total}
+            {flight?.details?.price.currency}-{flight?.details?.price?.total}
           </div>
         </Modal.Body>
         <Modal.Footer>
           <Button variant="secondary" onClick={() => setShowDetails(false)}>
             Close
           </Button>
-          {(userType === "user" || !isAuthorized || isAuthorized) && userType !== 'admin' ? (
+          {(userType === "user" || !isAuthorized || isAuthorized) &&
+          userType !== "admin" ? (
             !readOnly ? (
               <button
                 className={`btn btn-primary btn-elevate kt-login__btn-primary ${clsx(
@@ -289,6 +328,7 @@ const FlightDetails = ({
                   }
                 )}`}
                 style={loadingButtonStyle}
+                disabled={user && !user.passportNo}
                 onClick={handleClickBookNow}
               >
                 Book Now
@@ -313,7 +353,7 @@ const FlightDetails = ({
                   "pk_test_51HLtFDCzlUjqqV4cLqsB8OvMpfcaVDzIhl9HJAzf2trhhw3wEdQrIjR26zvooiOdLS1pqsxdW6xpbped5ObJUSIf0069JxvS7k"
                 }
                 name="PaymentForFlight"
-                amount={parseInt(details?.price?.total, 10) * 100}
+                amount={parseInt(flight?.details?.price?.total, 10) * 100}
                 currency="PKR"
               >
                 <button

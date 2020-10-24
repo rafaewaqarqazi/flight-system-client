@@ -149,7 +149,7 @@ const WorldTour = () => {
                       className="d-flex justify-content-center align-items-center w-100"
                       style={{ height: 100, fontSize: 20 }}
                     >
-                      No Booking Found!
+                      No Tour Found!
                     </div>
                   ) : (
                     currentDeal?.map(pack => (

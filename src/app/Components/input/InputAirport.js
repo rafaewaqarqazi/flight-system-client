@@ -14,7 +14,9 @@ const InputAirports = ({ field }) => {
         return (
           <Autocomplete
             onChange={handleChangeA}
-            options={airports}
+            options={airports.filter(
+              a => a.code !== values.origin && a.code !== values.destination
+            )}
             autoHighlight
             getOptionLabel={option => option.name}
             renderOption={option => (

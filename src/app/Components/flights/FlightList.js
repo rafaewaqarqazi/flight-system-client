@@ -34,7 +34,7 @@ const FlightList = ({
             className="pl-1 pr-1 mb-2"
             key={index}
           >
-            {flight.itineraries.map((itinerary, i) => (
+            {flight.details.itineraries.map((itinerary, i) => (
               <FlightItem itinerary={itinerary} key={i} />
             ))}
             <div
@@ -49,15 +49,22 @@ const FlightList = ({
                   Booking Status: {bookingStatuses[index]?.bookingStatus}
                 </div>
               )}
+              {bookingStatuses && (
+                <div>Ticket Number: {bookingStatuses[index]?._id}</div>
+              )}
               <div className="d-flex align-items-center">
                 <div className="mr-3">
-                  Total Price: {flight.price.currency}-{flight.price?.total}
+                  Total Price: {flight.details.price.currency}-
+                  {flight.details.price?.total}
                 </div>
                 <div>
                   <button
                     className="btn btn-label btn-sm"
                     onClick={() =>
-                      handleClickShowDetails(flight, bookingStatuses ? bookingStatuses[index] : {})
+                      handleClickShowDetails(
+                        flight,
+                        bookingStatuses ? bookingStatuses[index] : {}
+                      )
                     }
                   >
                     Details
@@ -69,7 +76,7 @@ const FlightList = ({
         ))
       )}
       <FlightDetails
-        details={details}
+        flight={details}
         setDetails={setDetails}
         setShowDetails={setShowDetails}
         showDetails={showDetails}
