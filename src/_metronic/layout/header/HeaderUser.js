@@ -42,6 +42,13 @@ const HeaderUser = () => {
           >
             Umrah Deals
           </NavLink>
+          <NavLink
+            to="/blogs"
+            activeClassName={"active"}
+            className="btn btn-label btn-sm ml-2"
+          >
+            Blogs
+          </NavLink>
         </div>
       </div>
       <Topbar />

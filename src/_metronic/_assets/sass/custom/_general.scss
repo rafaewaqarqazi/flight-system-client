@@ -34,3 +34,44 @@
   white-space: nowrap;
   overflow: hidden
 }
+.blog-item__description{
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 6;
+  text-overflow: ellipsis;
+  text-align: justify;
+  color: $dark;
+  //white-space: nowrap;
+  overflow: hidden
+}
+.carousel-indicators li {
+  background-color: darkgray; //this can be whatever color you want
+}
+.carousel-control-prev-icon,
+.carousel-control-next-icon {
+  //height: 100px;
+  //width: 100px;
+  //outline: black;
+  background-size: 100%, 100%;
+  border-radius: 50%;
+  //border: 1px solid black;
+  background-image: none;
+}
+
+.carousel-control-next-icon:after
+{
+  content: '>';
+  font-size: 55px;
+  color: darkgray;
+}
+
+.carousel-control-prev-icon:after {
+  content: '<';
+  font-size: 55px;
+  color: darkgray;
+}
+.border-0-editor .ck-content{
+  border: 0 !important;
+  padding-left: 4rem;
+  padding-right: 4rem;
+}

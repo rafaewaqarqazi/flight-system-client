@@ -14,6 +14,9 @@ import WorldTour from "../admin/World-tour";
 import WorldTourDetails from "../admin/WorldTourDetails";
 import UmrahDeals from "../admin/UmrahDeals";
 import UmrahDealsDetails from "../admin/UmrahDealsDetails";
+import Blogs from "./Blogs";
+import BlogsDetails from "./BlogsDetails";
+import CreateBlog from "./CreateBlog";
 
 const UserPages = () => {
   const { isAuthorized } = useSelector(
@@ -46,6 +49,39 @@ const UserPages = () => {
             <UserLayout>
               <KtContent>
                 <WorldTour />
+              </KtContent>
+            </UserLayout>
+          )}
+          exact
+        />
+        <Route
+          path="/blogs"
+          component={() => (
+            <UserLayout>
+              <KtContent>
+                <Blogs />
+              </KtContent>
+            </UserLayout>
+          )}
+          exact
+        />
+        <Route
+          path="/blogs/create"
+          component={() => (
+            <UserLayout>
+              <KtContent>
+                <CreateBlog />
+              </KtContent>
+            </UserLayout>
+          )}
+          exact
+        />
+        <Route
+          path="/blogs/details/:blogId"
+          component={() => (
+            <UserLayout>
+              <KtContent>
+                <BlogsDetails />
               </KtContent>
             </UserLayout>
           )}
