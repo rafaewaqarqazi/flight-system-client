@@ -70,7 +70,18 @@ const UserPages = () => {
           component={() => (
             <UserLayout>
               <KtContent>
-                <CreateBlog />
+                <CreateBlog edit={false} />
+              </KtContent>
+            </UserLayout>
+          )}
+          exact
+        />
+        <Route
+          path="/blogs/edit/:blogId"
+          component={() => (
+            <UserLayout>
+              <KtContent>
+                <CreateBlog edit={true} />
               </KtContent>
             </UserLayout>
           )}

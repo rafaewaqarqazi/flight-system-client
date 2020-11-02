@@ -1,11 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Portlet,
   PortletBody,
   PortletHeader,
   PortletHeaderToolbar
 } from "../../partials/content/Portlet";
-import { useHistory } from "react-router-dom";
+import { useHistory, useParams } from "react-router-dom";
 import { Alert } from "react-bootstrap";
 import { ErrorMessage, Field, Form, Formik } from "formik";
 import { createWorldTour } from "../../crud/flights.crud";
@@ -18,12 +18,16 @@ import clsx from "clsx";
 import { worldTourCreateValidations } from "../../../utils/validations/worldTourCreateValidations";
 import { createBlogValidations } from "../../../utils/validations/createBlogValidations";
 import { shallowEqual, useSelector } from "react-redux";
-import { createBlog } from "../../crud/blogs.crud";
+import { createBlog, getBlogById, updateBlog } from "../../crud/blogs.crud";
 
-const CreateBlog = () => {
+const CreateBlog = ({ edit }) => {
   const history = useHistory();
+  const params = useParams();
+
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState({ show: false, message: "" });
+  const [details, setDetails] = useState(null);
+
   const [success, setSuccess] = useState({ show: false, message: "" });
   const { user } = useSelector(
     ({ auth }) => ({
@@ -31,6 +35,17 @@ const CreateBlog = () => {
     }),
     shallowEqual
   );
+  useEffect(() => {
+    if (params.blogId && edit) {
+      getBlogById(params.blogId)
+        .then(result => {
+          setDetails(result.data);
+        })
+        .catch(error => {
+          console.log("error", error);
+        });
+    }
+  }, []);
   const [loadingButtonStyle, setLoadingButtonStyle] = useState({
     paddingRight: "1rem"
   });
@@ -66,6 +81,7 @@ const CreateBlog = () => {
       images.filter((img, index) => index !== i)
     );
   };
+
   return (
     <div className="pb-5">
       <Portlet className="kt-portlet--height-fluid-half kt-portlet--border-bottom-brand">
@@ -80,26 +96,36 @@ const CreateBlog = () => {
           <div className="row container">
             <Formik
               initialValues={{
-                title: "",
-                description: "",
-                images: []
+                title: details?.title || "",
+                description: details?.description || "",
+                images: details?.images || []
               }}
+              enableReinitialize
               validate={createBlogValidations}
               onSubmit={(values, { setStatus, setSubmitting, resetForm }) => {
                 enableLoading();
                 const formData = new FormData();
+                let oldImages = [];
                 values.images.map(img => {
-                  formData.append("files", img);
+                  if (!img.filename) {
+                    formData.append("files", img);
+                  }
+                  if (img.filename) {
+                    oldImages = [...oldImages, img];
+                  }
                 });
                 formData.append(
                   "details",
                   JSON.stringify({
                     title: values.title,
                     description: values.description,
-                    author: user._id
+                    author: user._id,
+                    images: edit ? oldImages : undefined,
+                    blogId: edit ? details?._id : undefined
                   })
                 );
-                createBlog(formData)
+                const callApi = edit ? updateBlog : createBlog;
+                callApi(formData)
                   .then(res => {
                     if (!res.data.success) {
                       disableLoading();
@@ -150,6 +176,7 @@ const CreateBlog = () => {
                     <div className="col-10">
                       <CKEditor
                         editor={ClassicEditor}
+                        data={values.description}
                         onChange={(event, editor) => {
                           setFieldValue("description", editor.getData());
                         }}
@@ -257,7 +284,8 @@ const CreateBlog = () => {
                         style={loadingButtonStyle}
                         disabled={isSubmitting}
                       >
-                        Create Blog
+                        {edit ? "Update " : "Create "}
+                        Blog
                       </button>
                     </div>
                   </div>

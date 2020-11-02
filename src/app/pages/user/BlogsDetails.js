@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useLocation, useHistory } from "react-router-dom";
+import { useLocation, useHistory, Link } from "react-router-dom";
 import {
   Portlet,
   PortletBody,
@@ -110,13 +110,21 @@ const BlogDetails = () => {
           title={details?.title}
           toolbar={
             <PortletHeaderToolbar>
-              {user._id === details?.author?._id && (
-                <button
-                  className="btn btn-sm btn-danger"
-                  onClick={() => setDeleteConfirm(true)}
-                >
-                  Delete Blog
-                </button>
+              {user?._id === details?.author?._id && (
+                <>
+                  <Link
+                    to={`/blogs/edit/${details?._id}`}
+                    className="btn btn-sm btn-label mx-2"
+                  >
+                    Edit Blog
+                  </Link>
+                  <button
+                    className="btn btn-sm btn-danger"
+                    onClick={() => setDeleteConfirm(true)}
+                  >
+                    Delete Blog
+                  </button>
+                </>
               )}
             </PortletHeaderToolbar>
           }
