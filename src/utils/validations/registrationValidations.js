@@ -1,10 +1,41 @@
 export const validateRegistration = (values, current) => {
   const errors = {};
+  const firstNameArray = Array.from(values.firstName);
+  const lastNameArray = Array.from(values.lastName);
+  const addressArray = Array.from(values.address);
+  let firstNameValid = true;
+  let lastNameValid = true;
+  let addressValid = true;
+  firstNameArray.map((ch, i) => {
+    if (i + 2 < firstNameArray.length) {
+      if (ch === firstNameArray[i + 1] && ch === firstNameArray[i + 2]) {
+        firstNameValid = false;
+      }
+    }
+  });
+  lastNameArray.map((ch, i) => {
+    if (i + 2 < lastNameArray.length) {
+      if (ch === lastNameArray[i + 1] && ch === lastNameArray[i + 2]) {
+        lastNameValid = false;
+      }
+    }
+  });
+  addressArray.map((ch, i) => {
+    if (i + 2 < addressArray.length) {
+      if (ch === addressArray[i + 1] && ch === addressArray[i + 2]) {
+        addressValid = false;
+      }
+    }
+  });
   if (current === 0 && values.firstName.trim() === "") {
     errors.firstName = "First Name is Required!";
+  } else if (current === 0 && !firstNameValid) {
+    errors.firstName = "Invalid Name!";
   }
   if (current === 0 && values.lastName.trim() === "") {
     errors.lastName = "Last Name is Required!";
+  } else if (current === 0 && !lastNameValid) {
+    errors.lastName = "Invalid Name!";
   }
   if (current === 0 && values.mobileNo.trim() === "") {
     errors.mobileNo = "Mobile No is Required!";
@@ -35,9 +66,11 @@ export const validateRegistration = (values, current) => {
   }
   if (current === 2 && !values.address) {
     errors.address = "Address is Required!";
+  } else if (current === 2 && !addressValid) {
+    errors.address = "Invalid Address!";
   }
   if (current === 2 && !values.country) {
-    errors.address = "Country is Required!";
+    errors.country = "Country is Required!";
   }
   if (current === 3 && !values.agree) {
     errors.agree = "Please Agree to our privacy and service policy";

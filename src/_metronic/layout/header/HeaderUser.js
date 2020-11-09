@@ -23,7 +23,7 @@ const HeaderUser = () => {
             <NavLink
               to="/my-trips"
               activeClassName={"active"}
-              className="btn btn-label btn-sm ml-5"
+              className="zzzzzzz ml-5"
             >
               My Trips
             </NavLink>
@@ -31,21 +31,21 @@ const HeaderUser = () => {
           <NavLink
             to="/world-tour"
             activeClassName={"active"}
-            className="btn btn-label btn-sm ml-2"
+            className="zzzzzzz ml-2"
           >
             World Tour
           </NavLink>
           <NavLink
             to="/umrah-deals"
             activeClassName={"active"}
-            className="btn btn-label btn-sm ml-2"
+            className="zzzzzzz ml-2"
           >
             Umrah Deals
           </NavLink>
           <NavLink
             to="/blogs"
             activeClassName={"active"}
-            className="btn btn-label btn-sm ml-2"
+            className="zzzzzzz ml-2"
           >
             Blogs
           </NavLink>

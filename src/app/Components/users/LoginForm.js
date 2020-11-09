@@ -10,6 +10,7 @@ import * as auth from "../../store/ducks/auth.duck";
 const LoginForm = ({ isModal, intl, handleLogin, ...props }) => {
   const history = useHistory();
   const [loading, setLoading] = useState(false);
+  const [passwordField, setPasswordField] = useState(true);
   const [loadingButtonStyle, setLoadingButtonStyle] = useState({
     paddingRight: "2.5rem"
   });
@@ -106,14 +107,23 @@ const LoginForm = ({ isModal, intl, handleLogin, ...props }) => {
               required
             />
           </div>
-          <div className="input-group">
+          <div className="input-group position-relative">
             <Field
               name="password"
-              type="password"
+              type={passwordField ? "password" : "text"}
               className="form-control"
               placeholder="Password"
               required
             />
+            <span
+              className="position-absolute"
+              style={{ right: 10, bottom: 13, cursor: "pointer" }}
+              onClick={() => setPasswordField(!passwordField)}
+            >
+              <i
+                className={`fa ${passwordField ? "fa-eye" : "fa-eye-slash"}`}
+              />
+            </span>
           </div>
           <div className="row kt-login__extra">
             <div className="col kt-align-right">
