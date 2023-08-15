@@ -1,6 +1,9 @@
 Client for Flight System app in Reactjs and Redux
 ## Setup
 
+## Demo
+[![Watch the video](https://img.youtube.com/vi/ZJsrkypCF7E/maxresdefault.jpg)](https://youtu.be/ZJsrkypCF7E)
+
 create a root directory `flight-system`
 and clone these two repositories in it
 
